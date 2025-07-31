@@ -582,14 +582,14 @@ body {
 /* Gallery Carousel Styles */
 .gallery-container {
   position: relative;
-  max-height: 300px;
+  max-height: 60vh;
   overflow: hidden;
 }
 
 .carousel-container {
   position: relative;
   width: 100%;
-  height: 240px;
+  height: 55vh;
   overflow: hidden;
   border-radius: 8px;
   margin-bottom: 10px;
@@ -633,6 +633,7 @@ body {
   padding: 20px 15px 10px;
   font-size: 0.9rem;
   text-align: center;
+  display: none;
 }
 
 .carousel-controls {
@@ -687,7 +688,7 @@ body {
 }
 
 .carousel-indicators {
-  display: flex;
+  display: none;
   gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
@@ -802,11 +803,11 @@ body {
 
   /* Gallery mobile styles */
   .gallery-container {
-    max-height: calc(100vh - 280px);
+    max-height: 50vh;
   }
 
   .carousel-container {
-    height: 200px;
+    height: 45vh;
   }
 
   .carousel-btn {
@@ -877,11 +878,11 @@ body {
 
   /* Gallery mobile styles for smaller screens */
   .gallery-container {
-    max-height: calc(100vh - 245px);
+    max-height: 45vh;
   }
 
   .carousel-container {
-    height: 180px;
+    height: 40vh;
   }
 
   .carousel-btn {
