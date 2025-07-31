@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+          <ul
+          id="play        <ul
+          id="playlist-afro"
+          class="pla        <ul
+          id="playlist-zouk"
+          class="playlist category-list"
+          style="display: none"
+        >
+          <li data-src="music/DjSaM_kompa_zouk.mp3">
+            DjSaM Zouk/Kompa
+            <a
+              href="music/DjSaM_kompa_zouk.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+          <li data-src="music/DjSaM Varietés Monde.mp3">
+            DjSaM Varietés Monde
+            <a
+              href="music/DjSaM Varietés Monde.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+          <li data-src="music/Django.mp3">
+            Django
+            <a
+              href="music/Django.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+        </ul>ist"
+          style="display: block"
+        >
+          <li data-src="music/bintouinama.mp3">
+            DjSaM Bintou Vs Inama
+            <a
+              href="music/bintouinama.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+          <li data-src="music/DjSaM afrobeats.mp3">
+            DjSaM Afrobeats
+            <a
+              href="music/DjSaM afrobeats.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+          <li data-src="music/DjMaitreSam.mp3">
+            DjMaitreSam
+            <a
+              href="music/DjMaitreSam.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+          <li data-src="music/Liyebo (feat. Vitch _ Co).mp3">
+            Liyebo (feat. Vitch & Co)
+            <a
+              href="music/Liyebo (feat. Vitch _ Co).mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+        </ul>        id="playlist-zouk"
+          class="playlist category-list"
+          style="display: none"
+        >
+          <li data-src="music/DjSaM_kompa_zouk.mp3">
+            DjSaM Zouk/Kompa
+            <a
+              href="music/DjSaM_kompa_zouk.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+        </ul>  class="playlist category-list"
+          style="display: block"
+        >
+          <li data-src="music/bintouinama.mp3">
+            DjSaM Bintou Vs Inama
+            <a
+              href="music/bintouinama.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+          <!-- Ajoute plus de chansons ici -->
+        </ul>UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DjSaM Music Player</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="player-header">
+      <div class="logo-container">
+        <img
+          src="images/original.gif"
+          alt="DJ Maitre Sam Logo"
+          class="logo-gif"
+        />
+        <img
+          src="images/proxy_form.gif"
+          alt="DJ Maitre Sam Title"
+          class="title-gif"
+        />
+      </div>
+    </header>
+    <section class="music-section">
+      <div class="audio-box">
+        <div class="playlist-tabs">
+          <button class="tab-btn active" data-tab="afro">Afro</button>
+          <button class="tab-btn" data-tab="zouk">Zouk</button>
+          <button class="tab-btn" data-tab="funk">Funk</button>
+          <button class="tab-btn" data-tab="gallery">Gallery</button>
+        </div>
+        <div class="player-controls">
+          <div class="equalizer" title="Equalizer">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <button id="repeatBtn" title="Répéter la chanson" class="repeat-btn">
+            <span>🔁</span>
+          </button>
+          <audio id="audioPlayer" controls preload="none"></audio>
+        </div>
+        <ul
+          id="playlist-afro"
+          class="playlist category-list"
+          style="display: block"
+        >
+          <li data-src="audio/bintouinama.mp3">
+            DjSaM Bintou Vs Inama
+            <a
+              href="audio/bintouinama.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+          <!-- Ajoute plus de chansons ici -->
+        </ul>
+        <ul
+          id="playlist-zouk"
+          class="playlist category-list"
+          style="display: none"
+        >
+          <li data-src="audio/DjSaM_kompa_zouk.mp3">
+            DjSaM Zouk/Kompa
+            <a
+              href="audio/DjSaM_kompa_zouk.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+        </ul>
+        <ul
+          id="playlist-funk"
+          class="playlist category-list"
+          style="display: none"
+        >
+          <li data-src="music/flashBack.mp3">
+            FlashBack
+            <a
+              href="music/flashBack.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+          <li data-src="music/greatest oldSchool.mp3">
+            Greatest Old School
+            <a
+              href="music/greatest oldSchool.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+          <li data-src="music/hiphop greatest.mp3">
+            Hip Hop Greatest
+            <a
+              href="music/hiphop greatest.mp3"
+              download
+              class="download-btn"
+              title="Télécharger"
+              ><i class="fa fa-download"></i
+            ></a>
+          </li>
+        </ul>
+        <div
+          id="playlist-gallery"
+          class="gallery-container category-list"
+          style="display: none"
+        >
+          <div class="carousel-container">
+            <div class="carousel-slide active">
+              <img src="images/Dj Sam in action.jpg" alt="DJ Sam in Action" />
+              <div class="slide-caption">DJ Sam in Action</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/Dj Sam5.jpg" alt="DJ Sam Performance" />
+              <div class="slide-caption">DJ Sam Performance</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/djsam micro.jpg" alt="DJ Sam with Microphone" />
+              <div class="slide-caption">DJ Sam with Microphone</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/djsam_pic.jpg" alt="DJ Sam Portrait" />
+              <div class="slide-caption">DJ Sam Portrait</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/djsamm1.jpeg" alt="DJ Sam Event 1" />
+              <div class="slide-caption">DJ Sam Event</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/djsamm2.jpeg" alt="DJ Sam Event 2" />
+              <div class="slide-caption">DJ Sam Event</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/djsamm3.jpeg" alt="DJ Sam Event 3" />
+              <div class="slide-caption">DJ Sam Event</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/djsamm4.jpeg" alt="DJ Sam Event 4" />
+              <div class="slide-caption">DJ Sam Event</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/djsamm6.jpeg" alt="DJ Sam Event 6" />
+              <div class="slide-caption">DJ Sam Event</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/djsamm7.jpg" alt="DJ Sam Event 7" />
+              <div class="slide-caption">DJ Sam Event</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/clubbing_carre.jpg" alt="Clubbing Event" />
+              <div class="slide-caption">Clubbing Event</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/20190701_221547.jpg" alt="Event Photo 1" />
+              <div class="slide-caption">Event Photo</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="images/20190706_130226.jpg" alt="Event Photo 2" />
+              <div class="slide-caption">Event Photo</div>
+            </div>
+          </div>
+          <div class="carousel-controls">
+            <button class="carousel-btn prev-btn" onclick="changeSlide(-1)">
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            <div class="carousel-indicators">
+              <span class="indicator active" onclick="currentSlide(1)"></span>
+              <span class="indicator" onclick="currentSlide(2)"></span>
+              <span class="indicator" onclick="currentSlide(3)"></span>
+              <span class="indicator" onclick="currentSlide(4)"></span>
+              <span class="indicator" onclick="currentSlide(5)"></span>
+              <span class="indicator" onclick="currentSlide(6)"></span>
+              <span class="indicator" onclick="currentSlide(7)"></span>
+              <span class="indicator" onclick="currentSlide(8)"></span>
+              <span class="indicator" onclick="currentSlide(9)"></span>
+              <span class="indicator" onclick="currentSlide(10)"></span>
+              <span class="indicator" onclick="currentSlide(11)"></span>
+              <span class="indicator" onclick="currentSlide(12)"></span>
+              <span class="indicator" onclick="currentSlide(13)"></span>
+            </div>
+            <button class="carousel-btn next-btn" onclick="changeSlide(1)">
+              <i class="fa fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="script.js"></script>
+  </body>
+</html>
