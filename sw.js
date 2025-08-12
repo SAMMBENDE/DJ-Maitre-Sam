@@ -1,4 +1,4 @@
-const CACHE_NAME = 'djsam-player-v1'
+const CACHE_NAME = 'djsam-player-v2' // Updated version number
 const urlsToCache = [
   './',
   './index.html',
@@ -23,6 +23,10 @@ const urlsToCache = [
 
 // Install event - cache resources
 self.addEventListener('install', (event) => {
+  console.log('Service worker installing...')
+  // Skip waiting to activate immediately
+  self.skipWaiting()
+
   event.waitUntil(
     caches
       .open(CACHE_NAME)
@@ -44,21 +48,65 @@ self.addEventListener('install', (event) => {
   )
 })
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - network first for HTML/CSS/JS, cache first for media
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Return cached version or fetch from network
-      if (response) {
-        return response
-      }
-      return fetch(event.request)
-    })
-  )
+  const request = event.request
+  const url = new URL(request.url)
+
+  // Network first strategy for main app files (to get updates immediately)
+  if (
+    request.destination === 'document' ||
+    request.url.includes('.html') ||
+    request.url.includes('.css') ||
+    request.url.includes('.js') ||
+    request.url.includes('manifest.json')
+  ) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // If fetch succeeds, update cache and return response
+          if (response.status === 200) {
+            const responseClone = response.clone()
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseClone)
+            })
+          }
+          return response
+        })
+        .catch(() => {
+          // If fetch fails, return from cache
+          return caches.match(request)
+        })
+    )
+  }
+  // Cache first strategy for images and music (for performance)
+  else {
+    event.respondWith(
+      caches.match(request).then((response) => {
+        if (response) {
+          return response
+        }
+        return fetch(request).then((response) => {
+          // Cache the fetched resource
+          if (response.status === 200) {
+            const responseClone = response.clone()
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseClone)
+            })
+          }
+          return response
+        })
+      })
+    )
+  }
 })
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and take control immediately
 self.addEventListener('activate', (event) => {
+  console.log('Service worker activating...')
+  // Take control of all pages immediately
+  self.clients.claim()
+
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -71,6 +119,13 @@ self.addEventListener('activate', (event) => {
       )
     })
   )
+})
+
+// Handle messages from the main thread
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.command === 'skipWaiting') {
+    self.skipWaiting()
+  }
 })
 
 // Background sync for offline actions

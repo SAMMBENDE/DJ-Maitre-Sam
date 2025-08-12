@@ -616,6 +616,67 @@
                 registration.scope
               )
 
+              // Check for updates periodically
+              setInterval(() => {
+                registration.update()
+              }, 60000) // Check every minute
+
+              // Handle service worker updates
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing
+                newWorker.addEventListener('statechange', () => {
+                  if (
+                    newWorker.state === 'installed' &&
+                    navigator.serviceWorker.controller
+                  ) {
+                    // New content is available, show update notification
+                    showUpdateNotification()
+                  }
+                })
+              })
+
+              function showUpdateNotification() {
+                const updateNotification = document.createElement('div')
+                updateNotification.innerHTML = `
+                  <div style="
+                    position: fixed;
+                    top: 70px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #4CAF50;
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 25px;
+                    font-family: inherit;
+                    font-weight: bold;
+                    z-index: 1001;
+                    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+                    cursor: pointer;
+                    animation: slideIn 0.3s ease;
+                  ">
+                    <i class="fa fa-refresh"></i> New version available! Click to update
+                  </div>
+                `
+
+                updateNotification.addEventListener('click', () => {
+                  if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                      command: 'skipWaiting',
+                    })
+                  }
+                  window.location.reload()
+                })
+
+                document.body.appendChild(updateNotification)
+
+                // Auto-remove after 10 seconds
+                setTimeout(() => {
+                  if (updateNotification.parentNode) {
+                    updateNotification.remove()
+                  }
+                }, 10000)
+              }
+
               // Show install prompt when available
               let deferredPrompt
               window.addEventListener('beforeinstallprompt', (e) => {
@@ -696,6 +757,59 @@
           installBtn.remove()
         }
       })
+
+      // Add manual refresh button for development/testing
+      function addRefreshButton() {
+        const refreshBtn = document.createElement('button')
+        refreshBtn.innerHTML = '<i class="fa fa-refresh"></i> Force Update'
+        refreshBtn.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: #2196F3;
+          color: white;
+          border: none;
+          padding: 10px 15px;
+          border-radius: 20px;
+          font-family: inherit;
+          font-size: 0.8rem;
+          cursor: pointer;
+          z-index: 1000;
+          box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        `
+
+        refreshBtn.addEventListener('click', async () => {
+          // Clear all caches
+          const cacheNames = await caches.keys()
+          await Promise.all(cacheNames.map((name) => caches.delete(name)))
+
+          // Unregister service worker
+          const registrations = await navigator.serviceWorker.getRegistrations()
+          await Promise.all(
+            registrations.map((registration) => registration.unregister())
+          )
+
+          // Hard reload
+          window.location.reload(true)
+        })
+
+        document.body.appendChild(refreshBtn)
+
+        // Auto-hide after 30 seconds
+        setTimeout(() => {
+          if (refreshBtn.parentNode) {
+            refreshBtn.remove()
+          }
+        }, 30000)
+      }
+
+      // Show refresh button only during development (when served from localhost)
+      if (
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1'
+      ) {
+        setTimeout(addRefreshButton, 2000)
+      }
     </script>
   </body>
 </html>
