@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DjSaM Music Player</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="DJ Maitre Sam Music Player" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="DjSaM Player" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#ff6b35" />
+    <meta name="msapplication-TileColor" content="#1a1a1a" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="images/djgroove.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="images/djgroove.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="images/djgroove.png" />
+    
     <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
@@ -47,6 +66,34 @@
           <button class="tab-btn" data-tab="funk">Hits</button>
           <button class="tab-btn" data-tab="gallery">Gallery</button>
         </div>
+        <div class="audio-controls">
+          <div class="control-group">
+            <label for="bassControl">Bass</label>
+            <input
+              type="range"
+              id="bassControl"
+              class="eq-slider"
+              min="-10"
+              max="10"
+              value="0"
+              step="1"
+            />
+            <span id="bassValue">0</span>
+          </div>
+          <div class="control-group">
+            <label for="trebleControl">Treble</label>
+            <input
+              type="range"
+              id="trebleControl"
+              class="eq-slider"
+              min="-10"
+              max="10"
+              value="0"
+              step="1"
+            />
+            <span id="trebleValue">0</span>
+          </div>
+        </div>
         <div class="player-controls">
           <div class="equalizer" title="Equalizer">
             <span></span><span></span><span></span><span></span><span></span>
@@ -82,7 +129,7 @@
             ></a>
           </li>
           <li data-src="music/DjMaitreSam.mp3">
-            DjMaitreSam
+            DjSaM go dj Hip-Hop
             <a
               href="music/DjMaitreSam.mp3"
               download
@@ -144,7 +191,7 @@
           style="display: none"
         >
           <li data-src="music/flashBack.mp3">
-            FlashBack
+            DjSaM FlashBack
             <a
               href="music/flashBack.mp3"
               download
@@ -154,7 +201,7 @@
             ></a>
           </li>
           <li data-src="music/greatest oldSchool.mp3">
-            Greatest Old School
+            DjSaM Greatest Old School Hip-Hop
             <a
               href="music/greatest oldSchool.mp3"
               download
@@ -163,10 +210,10 @@
               ><i class="fa fa-download"></i
             ></a>
           </li>
-          <li data-src="music/hiphop greatest.mp3">
-            Hip Hop Greatest
+          <li data-src="music/faally_bona.mp3">
+            DjSaM Fally Vs R.Bona
             <a
-              href="music/hiphop greatest.mp3"
+              href="music/faally_bona.mp3"
               download
               class="download-btn"
               title="Télécharger"
@@ -511,5 +558,91 @@
       </div>
     </section>
     <script src="script.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+      // Register service worker for PWA functionality
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+              
+              // Show install prompt when available
+              let deferredPrompt;
+              window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallPromotion();
+              });
+              
+              function showInstallPromotion() {
+                // Create install button
+                const installBtn = document.createElement('button');
+                installBtn.innerHTML = '<i class="fa fa-download"></i> Install App';
+                installBtn.className = 'install-btn';
+                installBtn.style.cssText = `
+                  position: fixed;
+                  top: 20px;
+                  right: 20px;
+                  background: #ff6b35;
+                  color: white;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 25px;
+                  font-family: inherit;
+                  font-weight: bold;
+                  cursor: pointer;
+                  z-index: 1000;
+                  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+                  transition: all 0.3s ease;
+                `;
+                
+                installBtn.addEventListener('mouseover', () => {
+                  installBtn.style.transform = 'translateY(-2px)';
+                  installBtn.style.boxShadow = '0 6px 20px rgba(255, 107, 53, 0.4)';
+                });
+                
+                installBtn.addEventListener('mouseout', () => {
+                  installBtn.style.transform = 'translateY(0)';
+                  installBtn.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.3)';
+                });
+                
+                installBtn.addEventListener('click', async () => {
+                  if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to the install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                    installBtn.remove();
+                  }
+                });
+                
+                document.body.appendChild(installBtn);
+                
+                // Remove button after 10 seconds if not clicked
+                setTimeout(() => {
+                  if (installBtn.parentNode) {
+                    installBtn.remove();
+                  }
+                }, 10000);
+              }
+            })
+            .catch(registration => {
+              console.log('ServiceWorker registration failed: ', registration);
+            });
+        });
+      }
+      
+      // Handle app installation
+      window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        // Hide install promotion
+        const installBtn = document.querySelector('.install-btn');
+        if (installBtn) {
+          installBtn.remove();
+        }
+      });
+    </script>
   </body>
 </html>

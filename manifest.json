@@ -1,0 +1,49 @@
+{
+  "name": "DJ Maitre Sam Music Player",
+  "short_name": "DjSaM Player",
+  "description": "Professional DJ Music Player with EQ controls and photo gallery",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#ff6b35",
+  "orientation": "portrait",
+  "scope": "./",
+  "lang": "fr",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    {
+      "src": "images/djgroove.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/djgroove.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/Dj Sam in action.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    },
+    {
+      "src": "images/djsam micro.jpg",
+      "sizes": "640x1136",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "fast",
+    "simple"
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}

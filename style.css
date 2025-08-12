@@ -383,6 +383,92 @@ body {
 .tab-btn:active {
   transform: scale(0.95);
 }
+
+/* Audio Controls Styles */
+.audio-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.control-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ff9800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.eq-slider {
+  width: 80px;
+  height: 6px;
+  background: #333;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.eq-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #ff9800;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.eq-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #ffb74d;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.5);
+}
+
+.eq-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: #ff9800;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.eq-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  background: #ffb74d;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.5);
+}
+
+.control-group span {
+  font-size: 0.8rem;
+  color: #ccc;
+  font-weight: 500;
+  min-width: 20px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
 .player-controls {
   display: flex;
   align-items: center;
@@ -582,14 +668,14 @@ body {
 /* Gallery Carousel Styles */
 .gallery-container {
   position: relative;
-  max-height: 60vh;
+  max-height: 75vh;
   overflow: hidden;
 }
 
 .carousel-container {
   position: relative;
   width: 100%;
-  height: 55vh;
+  height: 70vh;
   overflow: hidden;
   border-radius: 8px;
   margin-bottom: 10px;
@@ -749,6 +835,43 @@ body {
     height: 40px;
     max-width: 150px;
   }
+
+  /* Mobile audio controls */
+  .audio-controls {
+    gap: 20px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+  }
+
+  .control-group {
+    min-width: 80px;
+    gap: 6px;
+  }
+
+  .control-group label {
+    font-size: 0.8rem;
+  }
+
+  .eq-slider {
+    width: 60px;
+    height: 5px;
+  }
+
+  .eq-slider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .eq-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .control-group span {
+    font-size: 0.7rem;
+    padding: 1px 4px;
+  }
+
   .music-section {
     padding: 0;
     height: calc(100vh - 100px);
@@ -803,11 +926,11 @@ body {
 
   /* Gallery mobile styles */
   .gallery-container {
-    max-height: 50vh;
+    max-height: 65vh;
   }
 
   .carousel-container {
-    height: 45vh;
+    height: 60vh;
   }
 
   .carousel-btn {
@@ -844,6 +967,43 @@ body {
     height: 35px;
     max-width: 120px;
   }
+
+  /* Small mobile audio controls */
+  .audio-controls {
+    gap: 15px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+
+  .control-group {
+    min-width: 70px;
+    gap: 5px;
+  }
+
+  .control-group label {
+    font-size: 0.75rem;
+  }
+
+  .eq-slider {
+    width: 50px;
+    height: 4px;
+  }
+
+  .eq-slider::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+  }
+
+  .eq-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+  }
+
+  .control-group span {
+    font-size: 0.65rem;
+    padding: 1px 3px;
+  }
+
   .music-section {
     padding: 0;
     height: calc(100vh - 85px);
@@ -878,11 +1038,11 @@ body {
 
   /* Gallery mobile styles for smaller screens */
   .gallery-container {
-    max-height: 45vh;
+    max-height: 60vh;
   }
 
   .carousel-container {
-    height: 40vh;
+    height: 55vh;
   }
 
   .carousel-btn {
@@ -904,4 +1064,120 @@ body {
     font-size: 0.75rem;
     padding: 12px 8px 6px;
   }
+}
+
+/* PWA Specific Styles */
+/* iOS Safari specific styles for PWA */
+@supports (-webkit-touch-callout: none) {
+  .music-section {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+  
+  .audio-box {
+    margin-bottom: env(safe-area-inset-bottom, 0);
+  }
+}
+
+/* PWA fullscreen mode adjustments */
+@media (display-mode: standalone) {
+  .player-header {
+    padding-top: env(safe-area-inset-top, 20px);
+  }
+  
+  body {
+    user-select: none; /* Prevent text selection in PWA mode */
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Hide scrollbars in PWA mode for cleaner look */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Enhanced touch targets for PWA */
+  .tab-btn, .carousel-btn, .download-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Install button styles */
+.install-btn {
+  animation: pulse 2s infinite;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.install-btn i {
+  font-size: 1rem;
+}
+
+/* Offline indicator */
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #f44336;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  z-index: 1001;
+  font-weight: bold;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+}
+
+.offline-indicator.show {
+  transform: translateY(0);
+}
+
+/* PWA loading splash screen styles */
+.pwa-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #181818;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.pwa-loading img {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.pwa-loading h2 {
+  color: #ff6b35;
+  margin: 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+/* Enhanced touch feedback for PWA */
+.tab-btn:active,
+.carousel-btn:active,
+.download-btn:active,
+.repeat-btn:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+/* Better focus styles for PWA keyboard navigation */
+.tab-btn:focus,
+.carousel-btn:focus,
+.download-btn:focus {
+  outline: 2px solid #ff6b35;
+  outline-offset: 2px;
 }
