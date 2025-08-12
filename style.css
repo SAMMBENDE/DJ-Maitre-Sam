@@ -1072,7 +1072,7 @@ body {
   .music-section {
     padding-bottom: env(safe-area-inset-bottom, 20px);
   }
-  
+
   .audio-box {
     margin-bottom: env(safe-area-inset-bottom, 0);
   }
@@ -1083,20 +1083,22 @@ body {
   .player-header {
     padding-top: env(safe-area-inset-top, 20px);
   }
-  
+
   body {
     user-select: none; /* Prevent text selection in PWA mode */
     -webkit-user-select: none;
     -webkit-touch-callout: none;
   }
-  
+
   /* Hide scrollbars in PWA mode for cleaner look */
   ::-webkit-scrollbar {
     display: none;
   }
-  
+
   /* Enhanced touch targets for PWA */
-  .tab-btn, .carousel-btn, .download-btn {
+  .tab-btn,
+  .carousel-btn,
+  .download-btn {
     min-height: 44px;
     min-width: 44px;
   }

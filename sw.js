@@ -1,4 +1,4 @@
-const CACHE_NAME = 'djsam-player-v1';
+const CACHE_NAME = 'djsam-player-v1'
 const urlsToCache = [
   './',
   './index.html',
@@ -18,79 +18,78 @@ const urlsToCache = [
   './music/DjSaM afrobeats.mp3',
   './music/DjMaitreSam.mp3',
   // Font Awesome CSS
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css'
-];
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css',
+]
 
 // Install event - cache resources
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log('Opened cache')
+        return cache.addAll(urlsToCache)
       })
-      .catch(error => {
-        console.log('Cache addAll error: ', error);
+      .catch((error) => {
+        console.log('Cache addAll error: ', error)
         // Cache essential files even if some fail
         return cache.addAll([
           './',
           './index.html',
           './style.css',
           './script.js',
-          './manifest.json'
-        ]);
+          './manifest.json',
+        ])
       })
-  );
-});
+  )
+})
 
 // Fetch event - serve from cache, fallback to network
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Return cached version or fetch from network
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
+    caches.match(event.request).then((response) => {
+      // Return cached version or fetch from network
+      if (response) {
+        return response
       }
-    )
-  );
-});
+      return fetch(event.request)
+    })
+  )
+})
 
 // Activate event - clean up old caches
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map(cacheName => {
+        cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
+            console.log('Deleting old cache:', cacheName)
+            return caches.delete(cacheName)
           }
         })
-      );
+      )
     })
-  );
-});
+  )
+})
 
 // Background sync for offline actions
-self.addEventListener('sync', event => {
+self.addEventListener('sync', (event) => {
   if (event.tag === 'background-sync') {
-    event.waitUntil(doBackgroundSync());
+    event.waitUntil(doBackgroundSync())
   }
-});
+})
 
 function doBackgroundSync() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     // Sync any offline actions when connection is restored
-    console.log('Background sync triggered');
-    resolve();
-  });
+    console.log('Background sync triggered')
+    resolve()
+  })
 }
 
 // Push notifications (optional feature)
-self.addEventListener('push', event => {
+self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'New music available!',
     icon: './images/djgroove.png',
@@ -98,34 +97,30 @@ self.addEventListener('push', event => {
     vibrate: [200, 100, 200],
     data: {
       dateOfArrival: Date.now(),
-      primaryKey: 1
+      primaryKey: 1,
     },
     actions: [
       {
         action: 'explore',
         title: 'Listen Now',
-        icon: './images/djgroove.png'
+        icon: './images/djgroove.png',
       },
       {
         action: 'close',
         title: 'Close',
-        icon: './images/djgroove.png'
-      }
-    ]
-  };
+        icon: './images/djgroove.png',
+      },
+    ],
+  }
 
-  event.waitUntil(
-    self.registration.showNotification('DJ Maitre Sam', options)
-  );
-});
+  event.waitUntil(self.registration.showNotification('DJ Maitre Sam', options))
+})
 
 // Handle notification clicks
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
 
   if (event.action === 'explore') {
-    event.waitUntil(
-      clients.openWindow('./')
-    );
+    event.waitUntil(clients.openWindow('./'))
   }
-});
+})

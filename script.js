@@ -21,17 +21,17 @@ function initializeAudioContext() {
   if (!audioContext && audioPlayer.src) {
     audioContext = new (window.AudioContext || window.webkitAudioContext)()
     source = audioContext.createMediaElementSource(audioPlayer)
-    
+
     // Create bass filter (low shelf)
     bassFilter = audioContext.createBiquadFilter()
     bassFilter.type = 'lowshelf'
     bassFilter.frequency.value = 200
-    
+
     // Create treble filter (high shelf)
     trebleFilter = audioContext.createBiquadFilter()
     trebleFilter.type = 'highshelf'
     trebleFilter.frequency.value = 3000
-    
+
     // Connect filters
     source.connect(bassFilter)
     bassFilter.connect(trebleFilter)
@@ -40,7 +40,7 @@ function initializeAudioContext() {
 }
 
 // Bass control
-bassControl.addEventListener('input', function() {
+bassControl.addEventListener('input', function () {
   bassValue.textContent = this.value
   if (bassFilter) {
     bassFilter.gain.value = this.value
@@ -48,7 +48,7 @@ bassControl.addEventListener('input', function() {
 })
 
 // Treble control
-trebleControl.addEventListener('input', function() {
+trebleControl.addEventListener('input', function () {
   trebleValue.textContent = this.value
   if (trebleFilter) {
     trebleFilter.gain.value = this.value
@@ -205,33 +205,35 @@ audioPlayer.addEventListener('ended', hideMusicNotes)
 hideMusicNotes()
 
 // PWA Specific Functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Offline/Online detection
   function updateOnlineStatus() {
-    const offlineIndicator = document.querySelector('.offline-indicator') || createOfflineIndicator()
-    
+    const offlineIndicator =
+      document.querySelector('.offline-indicator') || createOfflineIndicator()
+
     if (navigator.onLine) {
       offlineIndicator.classList.remove('show')
     } else {
       offlineIndicator.classList.add('show')
     }
   }
-  
+
   function createOfflineIndicator() {
     const indicator = document.createElement('div')
     indicator.className = 'offline-indicator'
-    indicator.innerHTML = '<i class="fa fa-wifi"></i> You are currently offline. Some features may be limited.'
+    indicator.innerHTML =
+      '<i class="fa fa-wifi"></i> You are currently offline. Some features may be limited.'
     document.body.appendChild(indicator)
     return indicator
   }
-  
+
   // Listen for online/offline events
   window.addEventListener('online', updateOnlineStatus)
   window.addEventListener('offline', updateOnlineStatus)
-  
+
   // Initial check
   updateOnlineStatus()
-  
+
   // Enhanced audio loading for PWA
   function preloadAudio() {
     if ('serviceWorker' in navigator && 'caches' in window) {
@@ -239,20 +241,22 @@ document.addEventListener('DOMContentLoaded', function() {
       const firstTrack = document.querySelector('[data-src]')
       if (firstTrack) {
         const audioSrc = firstTrack.dataset.src
-        fetch(audioSrc).then(response => {
-          if (response.ok) {
-            console.log('First track preloaded for offline playback')
-          }
-        }).catch(err => {
-          console.log('Preload failed:', err)
-        })
+        fetch(audioSrc)
+          .then((response) => {
+            if (response.ok) {
+              console.log('First track preloaded for offline playback')
+            }
+          })
+          .catch((err) => {
+            console.log('Preload failed:', err)
+          })
       }
     }
   }
-  
+
   // Call preload after page loads
   setTimeout(preloadAudio, 2000)
-  
+
   // PWA Update notification
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -261,41 +265,46 @@ document.addEventListener('DOMContentLoaded', function() {
       refreshing = true
     })
   }
-  
+
   let refreshing = false
-  
+
   // Background sync for offline actions
   function registerBackgroundSync() {
-    if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
-      navigator.serviceWorker.ready.then(registration => {
-        return registration.sync.register('background-sync')
-      }).catch(err => {
-        console.log('Background sync registration failed:', err)
-      })
+    if (
+      'serviceWorker' in navigator &&
+      'sync' in window.ServiceWorkerRegistration.prototype
+    ) {
+      navigator.serviceWorker.ready
+        .then((registration) => {
+          return registration.sync.register('background-sync')
+        })
+        .catch((err) => {
+          console.log('Background sync registration failed:', err)
+        })
     }
   }
-  
+
   // Register background sync when going offline
   window.addEventListener('offline', registerBackgroundSync)
-  
+
   // Enhanced touch gestures for PWA
   let touchStartX = 0
   let touchStartY = 0
-  
-  document.addEventListener('touchstart', function(e) {
+
+  document.addEventListener('touchstart', function (e) {
     touchStartX = e.touches[0].clientX
     touchStartY = e.touches[0].clientY
   })
-  
-  document.addEventListener('touchend', function(e) {
+
+  document.addEventListener('touchend', function (e) {
     if (!touchStartX || !touchStartY) return
-    
+
     const touchEndX = e.changedTouches[0].clientX
     const touchEndY = e.changedTouches[0].clientY
-    
+
     const diffX = touchStartX - touchEndX
     const diffY = touchStartY - touchEndY
-    
+
     // Only handle horizontal swipes in gallery
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
       const galleryContainer = document.getElementById('playlist-gallery')
@@ -309,20 +318,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     }
-    
+
     // Reset
     touchStartX = 0
     touchStartY = 0
   })
-  
+
   // PWA performance optimization
   function optimizeForPWA() {
     // Lazy load images in gallery
     const images = document.querySelectorAll('.carousel-slide img')
-    
+
     if ('IntersectionObserver' in window) {
       const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const img = entry.target
             if (img.dataset.src) {
@@ -333,11 +342,13 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         })
       })
-      
-      images.forEach(img => {
+
+      images.forEach((img) => {
         if (img.src && !img.dataset.lazyLoaded) {
           // Move src to data-src for lazy loading (except first few images)
-          const slideIndex = Array.from(img.closest('.carousel-container').children).indexOf(img.closest('.carousel-slide'))
+          const slideIndex = Array.from(
+            img.closest('.carousel-container').children
+          ).indexOf(img.closest('.carousel-slide'))
           if (slideIndex > 2) {
             img.dataset.src = img.src
             img.src = ''
@@ -347,13 +358,13 @@ document.addEventListener('DOMContentLoaded', function() {
       })
     }
   }
-  
+
   // Initialize PWA optimizations
   setTimeout(optimizeForPWA, 1000)
 })
 
 // PWA keyboard shortcuts
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
   // Space bar to play/pause
   if (e.code === 'Space' && !e.target.matches('input')) {
     e.preventDefault()
@@ -363,7 +374,7 @@ document.addEventListener('keydown', function(e) {
       audioPlayer.pause()
     }
   }
-  
+
   // Arrow keys for gallery navigation when gallery is active
   const galleryContainer = document.getElementById('playlist-gallery')
   if (galleryContainer && galleryContainer.style.display !== 'none') {
