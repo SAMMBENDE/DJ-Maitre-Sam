@@ -43,6 +43,12 @@
     />
   </head>
   <body>
+    <input
+      type="file"
+      id="musicUpload"
+      accept="audio/*"
+      style="display: none"
+    />
     <!-- Floating Music Notes -->
     <div class="music-notes">
       <div class="music-note">♪</div>
@@ -193,6 +199,7 @@
             ></a>
           </li>
         </ul>
+
         <ul
           id="playlist-zouk"
           class="playlist category-list"
@@ -228,7 +235,13 @@
               ><i class="fa fa-download"></i
             ></a>
           </li>
+          <li class="upload-item">
+            <button class="playlist-add-btn" data-playlist="zouk">
+              <i class="fa fa-plus"></i> Add Music
+            </button>
+          </li>
         </ul>
+
         <ul
           id="playlist-funk"
           class="playlist category-list"
@@ -264,7 +277,13 @@
               ><i class="fa fa-download"></i
             ></a>
           </li>
+          <li class="upload-item">
+            <button class="playlist-add-btn" data-playlist="funk">
+              <i class="fa fa-plus"></i> Add Music
+            </button>
+          </li>
         </ul>
+
         <div
           id="playlist-gallery"
           class="gallery-container category-list"

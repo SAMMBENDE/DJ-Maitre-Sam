@@ -387,3 +387,142 @@ document.addEventListener('keydown', function (e) {
     }
   }
 })
+
+// Corrected upload functionality for your actual HTML structure
+document.addEventListener('DOMContentLoaded', function () {
+  const musicUpload = document.getElementById('musicUpload')
+  let pendingPlaylistId = null
+
+  // Handle upload button clicks
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.playlist-add-btn')) {
+      pendingPlaylistId = e.target.closest('.playlist-add-btn').dataset.playlist
+      musicUpload.click()
+    }
+  })
+
+  // Handle file selection
+  musicUpload.addEventListener('change', function (e) {
+    const file = e.target.files[0]
+    if (file && pendingPlaylistId) {
+      console.log('🎵 File selected:', file.name, 'Type:', file.type)
+
+      // Validation
+      if (!file.type.startsWith('audio/')) {
+        alert('Please select an audio file (MP3, WAV, M4A, etc.)')
+        return
+      }
+
+      if (file.size > 100 * 1024 * 1024) {
+        alert('File too large! Maximum size is 100MB.')
+        return
+      }
+
+      addMusicToPlaylist(file, pendingPlaylistId)
+    }
+    this.value = ''
+    pendingPlaylistId = null
+  })
+
+  function addMusicToPlaylist(file, playlistId) {
+    console.log('🎵 Adding:', file.name, 'to playlist:', playlistId)
+
+    // Create blob URL
+    const audioUrl = URL.createObjectURL(file)
+    const fileName = file.name.replace(/\.[^/.]+$/, '')
+
+    // Find the correct playlist using your actual HTML structure
+    const playlist = document.getElementById(`playlist-${playlistId}`)
+
+    console.log('📝 Looking for playlist:', `playlist-${playlistId}`)
+    console.log('📝 Playlist found:', playlist)
+
+    if (!playlist) {
+      console.error('❌ Playlist not found with ID:', `playlist-${playlistId}`)
+      return
+    }
+
+    // Find the upload button in this playlist
+    const uploadItem = playlist.querySelector('.upload-item')
+
+    console.log('⬆️ Upload item found:', uploadItem)
+
+    if (!uploadItem) {
+      console.error('❌ Upload item not found in playlist')
+      return
+    }
+
+    // Create new song element
+    const li = document.createElement('li')
+    li.dataset.src = audioUrl
+    li.innerHTML = `
+      ${fileName}
+      <a href="${audioUrl}" download="${fileName}" class="download-btn" title="Télécharger">
+        <i class="fa fa-download"></i>
+      </a>
+    `
+
+    // Add click listener
+    li.addEventListener('click', function (e) {
+      if (!e.target.closest('.download-btn')) {
+        console.log('🎵 Playing:', fileName)
+
+        // Clear active states
+        document
+          .querySelectorAll('.playlist li, .category-list li')
+          .forEach((item) => {
+            item.classList.remove('active')
+          })
+
+        // Set active
+        this.classList.add('active')
+
+        // Play audio
+        const audioPlayer = document.getElementById('audioPlayer')
+        audioPlayer.pause()
+        audioPlayer.src = audioUrl
+        audioPlayer.load()
+
+        audioPlayer
+          .play()
+          .then(() => console.log('✅ Playing successfully'))
+          .catch((error) => {
+            console.error('❌ Playback error:', error)
+            alert('Could not play this audio file')
+          })
+      }
+    })
+
+    // Insert before upload button
+    playlist.insertBefore(li, uploadItem)
+    console.log('✅ Song added successfully!')
+
+    // Show success
+    showSuccessMessage(`"${fileName}" added to playlist!`)
+  }
+
+  function showSuccessMessage(message) {
+    const notification = document.createElement('div')
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      z-index: 9999;
+      font-family: inherit;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    `
+    notification.textContent = message
+    document.body.appendChild(notification)
+
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove()
+      }
+    }, 3000)
+  }
+})
