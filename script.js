@@ -554,7 +554,7 @@ async function pushPhotoToGitHub(imageUrl, imageName) {
   const repo = 'DJ-Maitre-Sam'
   const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/index.html`
   const headers = {
-    Authorization: 'token ' + token,
+    Authorization: 'Bearer ' + token,
     Accept: 'application/vnd.github.v3+json',
     'Content-Type': 'application/json',
   }
@@ -567,7 +567,14 @@ async function pushPhotoToGitHub(imageUrl, imageName) {
     if (!res.ok) {
       if (res.status === 401) {
         localStorage.removeItem('gh_djsam_token')
-        throw new Error('Invalid token — please try again')
+        throw new Error('Invalid token — use Set Token to re-enter it')
+      }
+      if (res.status === 403) {
+        const body = await res.json()
+        throw new Error(
+          'Permission denied: ' +
+            (body.message || 'check token has Contents write access'),
+        )
       }
       throw new Error('GitHub fetch failed: ' + res.status)
     }
@@ -629,7 +636,12 @@ async function pushPhotoToGitHub(imageUrl, imageName) {
       )
     } else {
       const err = await commitRes.json()
-      throw new Error(err.message || 'Commit failed')
+      if (commitRes.status === 403) {
+        throw new Error(
+          'Token needs Contents: Read & Write permission on the repo',
+        )
+      }
+      throw new Error(err.message || 'Commit failed: ' + commitRes.status)
     }
   } catch (e) {
     console.error('GitHub push failed:', e)
