@@ -31,10 +31,9 @@ cloudinary_urls = [
     "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772290969/zc6yyqluuwrldek3vw61.jpg",
     "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772295791/Screenshot_20260106_231435_CapCut_n9iacd.jpg",
     "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772233915/WhatsApp_Image_2026-02-28_at_00.07.36_dugcoy.jpg",
-
 ]
 
-# Build new carousel slides
+# ── Build carousel slides ──────────────────────────────────────────────────────
 new_slides = '          <div class="carousel-container">\n'
 for i, url in enumerate(cloudinary_urls):
     active = ' active' if i == 0 else ''
@@ -44,14 +43,35 @@ for i, url in enumerate(cloudinary_urls):
     new_slides += '            </div>\n'
 new_slides += '          </div>'
 
-# Find and replace carousel-container section
-pattern = r'<div class="carousel-container">.*?</div>\s*\n\s*</div>'
-match = re.search(pattern, content, re.DOTALL)
+# ── Build indicators ──────────────────────────────────────────────────────────
+num = len(cloudinary_urls)
+indicators_html = '                        <div class="carousel-indicators">\n'
+indicators_html += '              <span class="indicator active" onclick="currentSlide(1)"></span>\n'
+for i in range(2, num + 1):
+    indicators_html += f'              <span class="indicator" onclick="currentSlide({i})"></span>\n'
+indicators_html += '            </div>'
 
-if match:
-    content = content[:match.start()] + new_slides + content[match.end():]
-    with open("index.html", "w") as f:
-        f.write(content)
-    print("Success: Gallery updated with 25 Cloudinary images")
-else:
-    print("Error: Could not find carousel-container to replace")
+# ── Replace carousel-container (unique split — no regex depth issues) ─────────
+START = '<div class="carousel-container">'
+END_AFTER = '        </div>\n          <div class="carousel-controls">'
+
+start_idx = content.find(START)
+if start_idx == -1:
+    print("Error: Could not find carousel-container")
+    exit(1)
+
+# Find everything after the START block by locating the END_AFTER anchor
+end_idx = content.find(END_AFTER, start_idx)
+if end_idx == -1:
+    print("Error: Could not find carousel-controls anchor")
+    exit(1)
+
+content = content[:start_idx] + new_slides + '\n' + content[end_idx:]
+
+# ── Replace indicators ────────────────────────────────────────────────────────
+ind_pattern = r'[ \t]*<div class="carousel-indicators">.*?</div>'
+content = re.sub(ind_pattern, indicators_html, content, flags=re.DOTALL)
+
+with open("index.html", "w") as f:
+    f.write(content)
+print(f"✓ Gallery updated with {len(cloudinary_urls)} images and {num} indicators")
