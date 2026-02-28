@@ -396,6 +396,7 @@ function uploadFileToCloudinary(file) {
         const imageName = data.original_filename || 'Gallery Photo'
         addPhotoToGallery(data.secure_url, imageName)
         showCloudinarySuccess(imageName + ' added to gallery!')
+        pushPhotoToGitHub(data.secure_url, imageName)
       } else if (data.error) {
         console.error('Cloudinary error:', data.error)
         if (data.error.includes('whitelisted')) {
@@ -441,6 +442,7 @@ function openUploadWidget() {
             const imageName = result.info.original_filename || 'Gallery Photo'
             addPhotoToGallery(imageUrl, imageName)
             showCloudinarySuccess(imageName + ' added to gallery!')
+            pushPhotoToGitHub(imageUrl, imageName)
           }
         },
       )
@@ -463,6 +465,7 @@ function openUploadWidget() {
             const imageName = result.info.original_filename || 'Gallery Photo'
             addPhotoToGallery(imageUrl, imageName)
             showCloudinarySuccess(imageName + ' added to gallery!')
+            pushPhotoToGitHub(imageUrl, imageName)
           }
         },
       )
@@ -496,11 +499,117 @@ function addPhotoToGallery(imageUrl, imageName) {
   document.querySelector('.carousel-indicators').appendChild(newIndicator)
 }
 
-function showCloudinarySuccess(message) {
+function showCloudinarySuccess(message, color) {
   const notification = document.createElement('div')
   notification.textContent = message
   notification.style.cssText =
-    'position:fixed;top:20px;right:20px;background:#4CAF50;color:white;padding:12px 20px;border-radius:8px;z-index:10000;font-weight:bold'
+    'position:fixed;top:20px;right:20px;background:' +
+    (color || '#4CAF50') +
+    ';color:white;padding:12px 20px;border-radius:8px;z-index:10000;font-weight:bold;max-width:80vw;word-break:break-word'
   document.body.appendChild(notification)
-  setTimeout(() => notification.remove(), 3000)
+  setTimeout(() => notification.remove(), 4000)
+}
+
+async function pushPhotoToGitHub(imageUrl, imageName) {
+  let token = localStorage.getItem('gh_djsam_token')
+  if (!token) {
+    token = prompt(
+      'Enter your GitHub Personal Access Token to publish photos live for everyone.\n(Stored only in this browser — never sent anywhere else.)',
+    )
+    if (!token) {
+      showCloudinarySuccess(
+        '⚠️ Photo saved locally only (no token provided)',
+        '#e67e22',
+      )
+      return
+    }
+    localStorage.setItem('gh_djsam_token', token.trim())
+    token = token.trim()
+  }
+
+  const owner = 'SAMMBENDE'
+  const repo = 'DJ-Maitre-Sam'
+  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/index.html`
+  const headers = {
+    Authorization: 'token ' + token,
+    Accept: 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json',
+  }
+
+  showCloudinarySuccess('📡 Publishing to all devices…', '#2980b9')
+
+  try {
+    // Fetch current index.html from GitHub
+    const res = await fetch(apiUrl, { headers })
+    if (!res.ok) {
+      if (res.status === 401) {
+        localStorage.removeItem('gh_djsam_token')
+        throw new Error('Invalid token — please try again')
+      }
+      throw new Error('GitHub fetch failed: ' + res.status)
+    }
+    const fileData = await res.json()
+    const sha = fileData.sha
+    // Decode (handles UTF-8 / accented chars)
+    let content = decodeURIComponent(
+      escape(atob(fileData.content.replace(/\n/g, ''))),
+    )
+
+    // Build new slide HTML
+    const safeUrl = imageUrl
+    const safeName = imageName.replace(/[<>"]/g, '')
+    const newSlide =
+      `            <div class="carousel-slide">\n` +
+      `              <img src="${safeUrl}" alt="${safeName}" />\n` +
+      `              <div class="slide-caption">${safeName}</div>\n` +
+      `            </div>\n`
+
+    // Insert new slide before carousel-container closing tag
+    const containerClose =
+      '          </div>\n        </div>\n          <div class="carousel-controls">'
+    if (!content.includes(containerClose)) {
+      throw new Error('Could not locate carousel-container in index.html')
+    }
+    content = content.replace(containerClose, newSlide + containerClose)
+
+    // Count existing indicators and add one more
+    const indicatorMatches = content.match(/class="indicator/g) || []
+    const newNum = indicatorMatches.length + 1
+    const indicatorClose =
+      '</div>\n            <button class="carousel-btn next-btn"'
+    if (content.includes(indicatorClose)) {
+      content = content.replace(
+        indicatorClose,
+        `  <span class="indicator" onclick="currentSlide(${newNum})"></span>\n            </div>\n            <button class="carousel-btn next-btn"`,
+      )
+    }
+
+    // Encode back to base64
+    const encoded = btoa(unescape(encodeURIComponent(content)))
+
+    // Commit to GitHub
+    const commitRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({
+        message: `Add gallery photo: ${safeName}`,
+        content: encoded,
+        sha: sha,
+        branch: 'main',
+      }),
+    })
+
+    if (commitRes.ok) {
+      showCloudinarySuccess(
+        '✅ Published! Live for everyone in ~60 seconds',
+        '#27ae60',
+      )
+    } else {
+      const err = await commitRes.json()
+      throw new Error(err.message || 'Commit failed')
+    }
+  } catch (e) {
+    console.error('GitHub push failed:', e)
+    showCloudinarySuccess('⚠️ Saved locally only. ' + e.message, '#e74c3c')
+  }
 }
