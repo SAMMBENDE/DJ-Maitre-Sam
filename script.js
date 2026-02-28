@@ -319,4 +319,3 @@ function showSuccessMessage(message) {
     }
   }, 3000)
 }
-

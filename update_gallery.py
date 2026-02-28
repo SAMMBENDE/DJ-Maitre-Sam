@@ -31,6 +31,13 @@ cloudinary_urls = [
     "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772290969/zc6yyqluuwrldek3vw61.jpg",
     "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772295791/Screenshot_20260106_231435_CapCut_n9iacd.jpg",
     "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772233915/WhatsApp_Image_2026-02-28_at_00.07.36_dugcoy.jpg",
+    "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772295787/lv_7591522330581404981_20260123133757_1_utyf3r.jpg",
+    "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772295783/lv_7313537744817507592_20260118020253_1_kb04c2.jpg",
+    "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772295784/lv_7580334364580515125_20260120233744_1_vrsrse.jpg",
+    "https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957561/professionals/maseceukrd84hxmrjafz.jpg",
+    "https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957561/professionals/ogeumsv8jabamrqr4wi9.jpg",
+    "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772295797/Snapchat-1562577533_zc8uh3.jpg",
+
 ]
 
 # ── Build carousel slides ──────────────────────────────────────────────────────
