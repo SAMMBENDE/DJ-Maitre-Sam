@@ -554,7 +554,7 @@ async function pushPhotoToGitHub(imageUrl, imageName) {
   const repo = 'DJ-Maitre-Sam'
   const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/index.html`
   const headers = {
-    Authorization: 'Bearer ' + token,
+    Authorization: 'token ' + token,
     Accept: 'application/vnd.github.v3+json',
     'Content-Type': 'application/json',
   }
