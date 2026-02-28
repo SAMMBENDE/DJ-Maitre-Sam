@@ -1,8 +1,37 @@
+// Password for gallery uploads
+const UPLOAD_PASSWORD = 'djsam123'
+function checkUploadAuth() {
+  if (!sessionStorage.getItem('uploadAuth')) {
+    const pwd = prompt('Enter password to upload:')
+    if (pwd === UPLOAD_PASSWORD) {
+      sessionStorage.setItem('uploadAuth', '1')
+      return true
+    }
+    return false
+  }
+  return true
+}
+
 const audioPlayer = document.getElementById('audioPlayer')
 const tabBtns = document.querySelectorAll('.tab-btn')
 const categoryLists = document.querySelectorAll('.category-list')
 const repeatBtn = document.getElementById('repeatBtn')
 const equalizer = document.querySelector('.equalizer')
+const pauseBtn = document.getElementById('pauseBtn')
+
+// Ensure audio player works with keyboard and controls
+audioPlayer.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') {
+    e.preventDefault()
+    if (audioPlayer.paused) {
+      audioPlayer.play()
+    } else {
+      audioPlayer.pause()
+    }
+  }
+})
+
+// (No override of audioPlayer.pause -- use event listeners only)
 
 // Audio EQ controls
 const bassControl = document.getElementById('bassControl')
@@ -58,6 +87,31 @@ trebleControl.addEventListener('input', function () {
 // Initialize audio context when audio starts playing
 audioPlayer.addEventListener('play', initializeAudioContext)
 
+// Add playing class to equalizer
+audioPlayer.addEventListener('play', () => {
+  if (audioContext && audioContext.state === 'suspended') {
+    audioContext.resume()
+  }
+  if (equalizer) {
+    equalizer.classList.add('playing')
+  }
+})
+
+audioPlayer.addEventListener('pause', () => {
+  if (audioContext && audioContext.state === 'running') {
+    audioContext.suspend()
+  }
+  if (equalizer) {
+    equalizer.classList.remove('playing')
+  }
+})
+
+audioPlayer.addEventListener('ended', function () {
+  if (equalizer) {
+    equalizer.classList.remove('playing')
+  }
+})
+
 // Tab switching
 tabBtns.forEach((btn) => {
   btn.addEventListener('click', function () {
@@ -68,7 +122,7 @@ tabBtns.forEach((btn) => {
       'block'
     // Play first song in selected category
     const items = document.querySelectorAll(
-      '#playlist-' + this.dataset.tab + ' li'
+      '#playlist-' + this.dataset.tab + ' li',
     )
     if (items.length > 0) {
       categoryLists.forEach((list) => {
@@ -97,432 +151,356 @@ document.querySelectorAll('.playlist li').forEach((item) => {
 // Auto-play next song in current category
 audioPlayer.addEventListener('ended', function () {
   const activeList = Array.from(categoryLists).find(
-    (list) => list.style.display !== 'none'
+    (list) => list.style.display !== 'none',
   )
-  const items = activeList.querySelectorAll('li')
-  const currentIndex = Array.from(items).findIndex((li) =>
-    li.classList.contains('active')
-  )
-  const nextIndex = (currentIndex + 1) % items.length
-  items.forEach((li) => li.classList.remove('active'))
-  items[nextIndex].classList.add('active')
-  audioPlayer.src = items[nextIndex].dataset.src
-  audioPlayer.play()
+  if (activeList) {
+    const items = activeList.querySelectorAll('li')
+    const currentItem = activeList.querySelector('li.active')
+    const currentIndex = Array.from(items).indexOf(currentItem)
+    const nextIndex = (currentIndex + 1) % items.length
+    if (items[nextIndex]) {
+      items[nextIndex].click()
+    }
+  }
 })
 
-// Repeat button logic
+// Repeat button functionality
+let repeatMode = 0 // 0: no repeat, 1: repeat all, 2: repeat one
 repeatBtn.addEventListener('click', function () {
-  audioPlayer.loop = !audioPlayer.loop
-  repeatBtn.classList.toggle('active', audioPlayer.loop)
+  repeatMode = (repeatMode + 1) % 3
+  if (repeatMode === 0) {
+    this.style.opacity = '0.5'
+    audioPlayer.loop = false
+  } else if (repeatMode === 1) {
+    this.style.opacity = '1'
+    this.innerHTML = '<span>🔁</span>'
+    audioPlayer.loop = false
+  } else {
+    this.style.opacity = '1'
+    this.innerHTML = '<span>🔂</span>'
+    audioPlayer.loop = true
+  }
 })
 
-// Equalizer animation only when playing
-audioPlayer.addEventListener('play', function () {
-  equalizer.classList.add('playing')
-})
-audioPlayer.addEventListener('pause', function () {
-  equalizer.classList.remove('playing')
-})
-audioPlayer.addEventListener('ended', function () {
-  equalizer.classList.remove('playing')
-})
-
-// Gallery Carousel Functionality
+// Carousel functionality
 let currentSlideIndex = 1
+let carouselInterval
+
+function changeSlide(n) {
+  showSlide((currentSlideIndex += n))
+}
+
+function currentSlide(n) {
+  showSlide((currentSlideIndex = n))
+}
 
 function showSlide(n) {
   const slides = document.querySelectorAll('.carousel-slide')
   const indicators = document.querySelectorAll('.indicator')
 
-  if (n > slides.length) currentSlideIndex = 1
-  if (n < 1) currentSlideIndex = slides.length
+  if (n > slides.length) {
+    currentSlideIndex = 1
+  }
+  if (n < 1) {
+    currentSlideIndex = slides.length
+  }
 
-  slides.forEach((slide) => slide.classList.remove('active'))
-  indicators.forEach((indicator) => indicator.classList.remove('active'))
+  slides.forEach((slide) => {
+    slide.classList.remove('active')
+  })
+  indicators.forEach((indicator) => {
+    indicator.classList.remove('active')
+  })
 
-  slides[currentSlideIndex - 1].classList.add('active')
-  indicators[currentSlideIndex - 1].classList.add('active')
-}
-
-function changeSlide(n) {
-  currentSlideIndex += n
-  showSlide(currentSlideIndex)
-}
-
-function currentSlide(n) {
-  currentSlideIndex = n
-  showSlide(currentSlideIndex)
-}
-
-// Auto-slide carousel every 4 seconds when gallery is active
-let carouselInterval
-function startCarouselAutoSlide() {
-  carouselInterval = setInterval(() => {
-    changeSlide(1)
-  }, 4000)
-}
-
-function stopCarouselAutoSlide() {
-  if (carouselInterval) {
-    clearInterval(carouselInterval)
+  if (slides[currentSlideIndex - 1]) {
+    slides[currentSlideIndex - 1].classList.add('active')
+  }
+  if (indicators[currentSlideIndex - 1]) {
+    indicators[currentSlideIndex - 1].classList.add('active')
   }
 }
 
-// Start auto-slide when gallery tab is selected
-document.addEventListener('DOMContentLoaded', function () {
+// Auto-rotate carousel every 8 seconds
+function autoRotateCarousel() {
   const galleryTab = document.querySelector('[data-tab="gallery"]')
-  if (galleryTab) {
-    galleryTab.addEventListener('click', function () {
-      setTimeout(startCarouselAutoSlide, 100) // Small delay to ensure tab is active
-    })
+  if (
+    galleryTab &&
+    document.getElementById('playlist-gallery').style.display !== 'none'
+  ) {
+    changeSlide(1)
   }
-
-  // Stop auto-slide when other tabs are selected
-  tabBtns.forEach((btn) => {
-    if (btn.dataset.tab !== 'gallery') {
-      btn.addEventListener('click', stopCarouselAutoSlide)
-    }
-  })
-})
-
-// Music Notes Animation Control
-const musicNotesContainer = document.querySelector('.music-notes')
-
-function showMusicNotes() {
-  musicNotesContainer.style.display = 'block'
 }
+setInterval(autoRotateCarousel, 8000)
 
-function hideMusicNotes() {
-  musicNotesContainer.style.display = 'none'
-}
-
-// Show notes when music plays, hide when paused
-audioPlayer.addEventListener('play', showMusicNotes)
-audioPlayer.addEventListener('pause', hideMusicNotes)
-audioPlayer.addEventListener('ended', hideMusicNotes)
-
-// Hide notes initially
-hideMusicNotes()
-
-// PWA Specific Functionality
-document.addEventListener('DOMContentLoaded', function () {
-  // Offline/Online detection
-  function updateOnlineStatus() {
-    const offlineIndicator =
-      document.querySelector('.offline-indicator') || createOfflineIndicator()
-
-    if (navigator.onLine) {
-      offlineIndicator.classList.remove('show')
-    } else {
-      offlineIndicator.classList.add('show')
-    }
-  }
-
-  function createOfflineIndicator() {
-    const indicator = document.createElement('div')
-    indicator.className = 'offline-indicator'
-    indicator.innerHTML =
-      '<i class="fa fa-wifi"></i> You are currently offline. Some features may be limited.'
-    document.body.appendChild(indicator)
-    return indicator
-  }
-
-  // Listen for online/offline events
-  window.addEventListener('online', updateOnlineStatus)
-  window.addEventListener('offline', updateOnlineStatus)
-
-  // Initial check
-  updateOnlineStatus()
-
-  // Enhanced audio loading for PWA
-  function preloadAudio() {
-    if ('serviceWorker' in navigator && 'caches' in window) {
-      // Preload first track for instant playback
-      const firstTrack = document.querySelector('[data-src]')
-      if (firstTrack) {
-        const audioSrc = firstTrack.dataset.src
-        fetch(audioSrc)
-          .then((response) => {
-            if (response.ok) {
-              console.log('First track preloaded for offline playback')
-            }
-          })
-          .catch((err) => {
-            console.log('Preload failed:', err)
-          })
-      }
-    }
-  }
-
-  // Call preload after page loads
-  setTimeout(preloadAudio, 2000)
-
-  // PWA Update notification
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (refreshing) return
-      window.location.reload()
-      refreshing = true
-    })
-  }
-
-  let refreshing = false
-
-  // Background sync for offline actions
-  function registerBackgroundSync() {
-    if (
-      'serviceWorker' in navigator &&
-      'sync' in window.ServiceWorkerRegistration.prototype
-    ) {
-      navigator.serviceWorker.ready
-        .then((registration) => {
-          return registration.sync.register('background-sync')
-        })
-        .catch((err) => {
-          console.log('Background sync registration failed:', err)
-        })
-    }
-  }
-
-  // Register background sync when going offline
-  window.addEventListener('offline', registerBackgroundSync)
-
-  // Enhanced touch gestures for PWA
-  let touchStartX = 0
-  let touchStartY = 0
-
-  document.addEventListener('touchstart', function (e) {
-    touchStartX = e.touches[0].clientX
-    touchStartY = e.touches[0].clientY
-  })
-
-  document.addEventListener('touchend', function (e) {
-    if (!touchStartX || !touchStartY) return
-
-    const touchEndX = e.changedTouches[0].clientX
-    const touchEndY = e.changedTouches[0].clientY
-
-    const diffX = touchStartX - touchEndX
-    const diffY = touchStartY - touchEndY
-
-    // Only handle horizontal swipes in gallery
-    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-      const galleryContainer = document.getElementById('playlist-gallery')
-      if (galleryContainer && galleryContainer.style.display !== 'none') {
-        if (diffX > 0) {
-          // Swipe left - next slide
-          changeSlide(1)
-        } else {
-          // Swipe right - previous slide
-          changeSlide(-1)
-        }
-      }
-    }
-
-    // Reset
-    touchStartX = 0
-    touchStartY = 0
-  })
-
-  // PWA performance optimization
-  function optimizeForPWA() {
-    // Lazy load images in gallery
-    const images = document.querySelectorAll('.carousel-slide img')
-
-    if ('IntersectionObserver' in window) {
-      const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const img = entry.target
-            if (img.dataset.src) {
-              img.src = img.dataset.src
-              img.removeAttribute('data-src')
-              observer.unobserve(img)
-            }
-          }
-        })
-      })
-
-      images.forEach((img) => {
-        if (img.src && !img.dataset.lazyLoaded) {
-          // Move src to data-src for lazy loading (except first few images)
-          const slideIndex = Array.from(
-            img.closest('.carousel-container').children
-          ).indexOf(img.closest('.carousel-slide'))
-          if (slideIndex > 2) {
-            img.dataset.src = img.src
-            img.src = ''
-            imageObserver.observe(img)
-          }
-        }
-      })
-    }
-  }
-
-  // Initialize PWA optimizations
-  setTimeout(optimizeForPWA, 1000)
-})
-
-// PWA keyboard shortcuts
-document.addEventListener('keydown', function (e) {
-  // Space bar to play/pause
-  if (e.code === 'Space' && !e.target.matches('input')) {
-    e.preventDefault()
-    if (audioPlayer.paused) {
-      audioPlayer.play()
-    } else {
-      audioPlayer.pause()
-    }
-  }
-
-  // Arrow keys for gallery navigation when gallery is active
-  const galleryContainer = document.getElementById('playlist-gallery')
-  if (galleryContainer && galleryContainer.style.display !== 'none') {
-    if (e.code === 'ArrowLeft') {
-      e.preventDefault()
-      changeSlide(-1)
-    } else if (e.code === 'ArrowRight') {
-      e.preventDefault()
+// Keyboard navigation for carousel
+document.addEventListener('keydown', function (event) {
+  if (document.getElementById('playlist-gallery').style.display !== 'none') {
+    if (event.key === 'ArrowRight') {
       changeSlide(1)
+    } else if (event.key === 'ArrowLeft') {
+      changeSlide(-1)
     }
   }
 })
 
-// Corrected upload functionality for your actual HTML structure
-document.addEventListener('DOMContentLoaded', function () {
-  const musicUpload = document.getElementById('musicUpload')
-  let pendingPlaylistId = null
-
-  // Handle upload button clicks
-  document.addEventListener('click', function (e) {
-    if (e.target.closest('.playlist-add-btn')) {
-      pendingPlaylistId = e.target.closest('.playlist-add-btn').dataset.playlist
-      musicUpload.click()
-    }
+// Music upload functionality
+const musicUploadInput = document.getElementById('musicUpload')
+if (musicUploadInput) {
+  document.querySelectorAll('.playlist-add-btn').forEach((btn) => {
+    btn.addEventListener('click', function () {
+      const playlistId = this.dataset.playlist
+      musicUploadInput.dataset.playlistId = playlistId
+      musicUploadInput.click()
+    })
   })
 
-  // Handle file selection
-  musicUpload.addEventListener('change', function (e) {
-    const file = e.target.files[0]
-    if (file && pendingPlaylistId) {
-      console.log('🎵 File selected:', file.name, 'Type:', file.type)
+  musicUploadInput.addEventListener('change', function () {
+    const file = this.files[0]
+    if (file) {
+      const playlistId = this.dataset.playlistId
+      const fileName = file.name.replace('.mp3', '')
+      const playlist = document.getElementById('playlist-' + playlistId)
 
-      // Validation
-      if (!file.type.startsWith('audio/')) {
-        alert('Please select an audio file (MP3, WAV, M4A, etc.)')
-        return
+      // Create new list item
+      const newLi = document.createElement('li')
+      newLi.dataset.src = URL.createObjectURL(file)
+      newLi.innerHTML = `
+        ${fileName}
+        <a class="download-btn" title="Play"><i class="fa fa-play"></i></a>
+      `
+
+      // Insert before the upload button
+      const uploadItem = playlist.querySelector('.upload-item')
+      if (uploadItem) {
+        playlist.insertBefore(newLi, uploadItem)
+      } else {
+        playlist.appendChild(newLi)
       }
 
-      if (file.size > 100 * 1024 * 1024) {
-        alert('File too large! Maximum size is 100MB.')
-        return
-      }
-
-      addMusicToPlaylist(file, pendingPlaylistId)
-    }
-    this.value = ''
-    pendingPlaylistId = null
-  })
-
-  function addMusicToPlaylist(file, playlistId) {
-    console.log('🎵 Adding:', file.name, 'to playlist:', playlistId)
-
-    // Create blob URL
-    const audioUrl = URL.createObjectURL(file)
-    const fileName = file.name.replace(/\.[^/.]+$/, '')
-
-    // Find the correct playlist using your actual HTML structure
-    const playlist = document.getElementById(`playlist-${playlistId}`)
-
-    console.log('📝 Looking for playlist:', `playlist-${playlistId}`)
-    console.log('📝 Playlist found:', playlist)
-
-    if (!playlist) {
-      console.error('❌ Playlist not found with ID:', `playlist-${playlistId}`)
-      return
-    }
-
-    // Find the upload button in this playlist
-    const uploadItem = playlist.querySelector('.upload-item')
-
-    console.log('⬆️ Upload item found:', uploadItem)
-
-    if (!uploadItem) {
-      console.error('❌ Upload item not found in playlist')
-      return
-    }
-
-    // Create new song element
-    const li = document.createElement('li')
-    li.dataset.src = audioUrl
-    li.innerHTML = `
-      ${fileName}
-      <a href="${audioUrl}" download="${fileName}" class="download-btn" title="Télécharger">
-        <i class="fa fa-download"></i>
-      </a>
-    `
-
-    // Add click listener
-    li.addEventListener('click', function (e) {
-      if (!e.target.closest('.download-btn')) {
-        console.log('🎵 Playing:', fileName)
-
-        // Clear active states
+      // Add click event
+      newLi.addEventListener('click', function () {
         document
-          .querySelectorAll('.playlist li, .category-list li')
-          .forEach((item) => {
-            item.classList.remove('active')
+          .querySelectorAll('#playlist-' + playlistId + ' li')
+          .forEach((li) => {
+            li.classList.remove('active')
           })
-
-        // Set active
         this.classList.add('active')
+        audioPlayer.src = this.dataset.src
+        audioPlayer.play()
+      })
 
-        // Play audio
-        const audioPlayer = document.getElementById('audioPlayer')
-        audioPlayer.pause()
-        audioPlayer.src = audioUrl
-        audioPlayer.load()
+      // Show success
+      showSuccessMessage(`"${fileName}" added to playlist!`)
+    }
+  })
+}
 
-        audioPlayer
-          .play()
-          .then(() => console.log('✅ Playing successfully'))
-          .catch((error) => {
-            console.error('❌ Playback error:', error)
-            alert('Could not play this audio file')
-          })
+function showSuccessMessage(message) {
+  const notification = document.createElement('div')
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    z-index: 9999;
+    font-family: inherit;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  `
+  notification.textContent = message
+  document.body.appendChild(notification)
+
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.remove()
+    }
+  }, 3000)
+}
+
+// Cloudinary Gallery Upload
+const uploadGalleryBtn = document.getElementById('uploadGalleryBtn')
+const carouselContainer = document.querySelector('.carousel-container')
+let slideCounter = document.querySelectorAll('.carousel-slide').length
+
+// Wait for Cloudinary to be available
+let cloudinaryRetries = 0
+const waitForCloudinary = setInterval(() => {
+  if (
+    typeof cloudinary !== 'undefined' &&
+    (typeof cloudinary.openUploadWidget === 'function' ||
+      typeof cloudinary.createUploadWidget === 'function')
+  ) {
+    clearInterval(waitForCloudinary)
+    console.log('✓ Cloudinary widget loaded successfully')
+    setupUploadButton()
+  } else if (cloudinaryRetries > 150) {
+    // 150 * 100ms = 15 seconds timeout
+    clearInterval(waitForCloudinary)
+    console.warn('Cloudinary widget not available, using direct API upload')
+    setupUploadButton(true) // true = use direct API
+  }
+  cloudinaryRetries++
+}, 100)
+
+function setupUploadButton(useDirectAPI = false) {
+  if (uploadGalleryBtn) {
+    uploadGalleryBtn.addEventListener('click', function () {
+      if (!checkUploadAuth()) return
+      if (useDirectAPI) {
+        openDirectUpload()
+      } else {
+        openUploadWidget()
       }
     })
-
-    // Insert before upload button
-    playlist.insertBefore(li, uploadItem)
-    console.log('✅ Song added successfully!')
-
-    // Show success
-    showSuccessMessage(`"${fileName}" added to playlist!`)
   }
+}
 
-  function showSuccessMessage(message) {
-    const notification = document.createElement('div')
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #4CAF50;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      z-index: 9999;
-      font-family: inherit;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    `
-    notification.textContent = message
-    document.body.appendChild(notification)
+function openDirectUpload() {
+  // Create hidden file input
+  const fileInput = document.createElement('input')
+  fileInput.type = 'file'
+  fileInput.accept = 'image/*'
+  fileInput.multiple = true
+  fileInput.style.display = 'none'
 
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.remove()
+  fileInput.addEventListener('change', function () {
+    const files = Array.from(this.files)
+    files.forEach((file) => {
+      uploadFileToCloudinary(file)
+    })
+  })
+
+  document.body.appendChild(fileInput)
+  fileInput.click()
+  setTimeout(() => fileInput.remove(), 1000)
+}
+
+function uploadFileToCloudinary(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('upload_preset', 'dj-maitre-sam')
+  formData.append('cloud_name', 'dkd3k6eau')
+
+  showCloudinarySuccess('Uploading ' + file.name + '...')
+
+  fetch('https://api.cloudinary.com/v1_1/dkd3k6eau/image/upload', {
+    method: 'POST',
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.secure_url) {
+        const imageName = data.original_filename || 'Gallery Photo'
+        addPhotoToGallery(data.secure_url, imageName)
+        showCloudinarySuccess(imageName + ' added to gallery!')
+      } else if (data.error) {
+        console.error('Cloudinary error:', data.error)
+        if (data.error.includes('whitelisted')) {
+          showCloudinarySuccess(
+            '⚠️ Upload preset not configured. Please enable unsigned uploads in your Cloudinary dashboard for the ml_default preset.',
+          )
+        } else {
+          showCloudinarySuccess('❌ Upload failed: ' + data.error.message)
+        }
       }
-    }, 3000)
+    })
+    .catch((error) => {
+      console.error('Upload failed:', error)
+      showCloudinarySuccess('Upload failed: ' + error.message)
+    })
+}
+
+function openUploadWidget() {
+  if (typeof cloudinary === 'undefined') {
+    console.log('Cloudinary not available, using direct API')
+    openDirectUpload()
+    return
   }
-})
+
+  try {
+    // Try newer API first, fall back to older API
+    if (typeof cloudinary.openUploadWidget === 'function') {
+      // Old API (upload-widget library)
+      cloudinary.openUploadWidget(
+        {
+          cloudName: 'dkd3k6eau',
+          uploadPreset: 'dj-maitre-sam',
+          multiple: true,
+          sources: ['local', 'url', 'camera'],
+          resourceType: 'image',
+          clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+          maxFileSize: 10000000,
+          maxFiles: 10,
+        },
+        (error, result) => {
+          if (!error && result && result.event === 'success') {
+            const imageUrl = result.info.secure_url
+            const imageName = result.info.original_filename || 'Gallery Photo'
+            addPhotoToGallery(imageUrl, imageName)
+            showCloudinarySuccess(imageName + ' added to gallery!')
+          }
+        },
+      )
+    } else if (typeof cloudinary.createUploadWidget === 'function') {
+      // New API (cloudinary-core library)
+      const myWidget = cloudinary.createUploadWidget(
+        {
+          cloudName: 'dkd3k6eau',
+          uploadPreset: 'dj-maitre-sam',
+          multiple: true,
+          sources: ['local', 'url', 'camera'],
+          resourceType: 'image',
+          clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+          maxFileSize: 10000000,
+          maxFiles: 10,
+        },
+        (error, result) => {
+          if (!error && result && result.event === 'success') {
+            const imageUrl = result.info.secure_url
+            const imageName = result.info.original_filename || 'Gallery Photo'
+            addPhotoToGallery(imageUrl, imageName)
+            showCloudinarySuccess(imageName + ' added to gallery!')
+          }
+        },
+      )
+      myWidget.open()
+    } else {
+      console.log('Widget APIs not found, using direct API')
+      openDirectUpload()
+    }
+  } catch (error) {
+    console.error('Widget error:', error)
+    openDirectUpload()
+  }
+}
+
+function addPhotoToGallery(imageUrl, imageName) {
+  const newSlide = document.createElement('div')
+  newSlide.className = 'carousel-slide'
+  newSlide.innerHTML =
+    '<img src="' +
+    imageUrl +
+    '" alt="' +
+    imageName +
+    '" /><div class="slide-caption">' +
+    imageName +
+    '</div>'
+  carouselContainer.appendChild(newSlide)
+  const newIndicator = document.createElement('span')
+  newIndicator.className = 'indicator'
+  slideCounter++
+  newIndicator.onclick = () => currentSlide(slideCounter)
+  document.querySelector('.carousel-indicators').appendChild(newIndicator)
+}
+
+function showCloudinarySuccess(message) {
+  const notification = document.createElement('div')
+  notification.textContent = message
+  notification.style.cssText =
+    'position:fixed;top:20px;right:20px;background:#4CAF50;color:white;padding:12px 20px;border-radius:8px;z-index:10000;font-weight:bold'
+  document.body.appendChild(notification)
+  setTimeout(() => notification.remove(), 3000)
+}

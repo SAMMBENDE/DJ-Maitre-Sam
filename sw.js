@@ -1,4 +1,4 @@
-const CACHE_NAME = 'djsam-player-v2' // Updated version number
+const CACHE_NAME = 'djsam-player-v3' // Updated version number
 const urlsToCache = [
   './',
   './index.html',
@@ -44,7 +44,7 @@ self.addEventListener('install', (event) => {
           './script.js',
           './manifest.json',
         ])
-      })
+      }),
   )
 })
 
@@ -76,7 +76,7 @@ self.addEventListener('fetch', (event) => {
         .catch(() => {
           // If fetch fails, return from cache
           return caches.match(request)
-        })
+        }),
     )
   }
   // Cache first strategy for images and music (for performance)
@@ -96,7 +96,7 @@ self.addEventListener('fetch', (event) => {
           }
           return response
         })
-      })
+      }),
     )
   }
 })
@@ -115,9 +115,9 @@ self.addEventListener('activate', (event) => {
             console.log('Deleting old cache:', cacheName)
             return caches.delete(cacheName)
           }
-        })
+        }),
       )
-    })
+    }),
   )
 })
 

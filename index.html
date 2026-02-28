@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -41,6 +41,19 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
     />
+    <!-- Cloudinary Widget - Official unpkg CDN -->
+    <script
+      src="https://unpkg.com/cloudinary-core@latest/cloudinary-core.js"
+      type="text/javascript"
+      async
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/cloudinary-upload-widget@latest/dist/CloudinaryUploadWidget.js"
+      type="text/javascript"
+      async
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <input
@@ -401,267 +414,81 @@
           class="gallery-container category-list"
           style="display: none"
         >
-          <div class="carousel-container">
+                    <div class="carousel-container">
             <div class="carousel-slide active">
-              <img src="images/Dj Sam in action.jpg" alt="DJ Sam in Action" />
-              <div class="slide-caption">DJ Sam in Action</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/Dj Sam5.jpg" alt="DJ Sam Performance" />
-              <div class="slide-caption">DJ Sam Performance</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsam micro.jpg" alt="DJ Sam with Microphone" />
-              <div class="slide-caption">DJ Sam with Microphone</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsam_pic.jpg" alt="DJ Sam Portrait" />
-              <div class="slide-caption">DJ Sam Portrait</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsamm1.jpeg" alt="DJ Sam Event 1" />
-              <div class="slide-caption">DJ Sam Event</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsamm2.jpeg" alt="DJ Sam Event 2" />
-              <div class="slide-caption">DJ Sam Event</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsamm3.jpeg" alt="DJ Sam Event 3" />
-              <div class="slide-caption">DJ Sam Event</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsamm4.jpeg" alt="DJ Sam Event 4" />
-              <div class="slide-caption">DJ Sam Event</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsamm6.jpeg" alt="DJ Sam Event 6" />
-              <div class="slide-caption">DJ Sam Event</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsamm7.jpg" alt="DJ Sam Event 7" />
-              <div class="slide-caption">DJ Sam Event</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/clubbing_carre.jpg" alt="Clubbing Event" />
-              <div class="slide-caption">Clubbing Event</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/20190701_221547.jpg" alt="Event Photo 1" />
-              <div class="slide-caption">Event Photo</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/20190706_130226.jpg" alt="Event Photo 2" />
-              <div class="slide-caption">Event Photo</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/img.jpeg" alt="DJ Gallery Photo" />
-              <div class="slide-caption">DJ Gallery</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/img1.jpeg" alt="DJ Gallery Photo 1" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1770778598/professionals/pnkijojtj5cqmjg1hhx5.jpg" alt="DJ Gallery 1" />
               <div class="slide-caption">DJ Gallery 1</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img2.jpeg" alt="DJ Gallery Photo 2" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1770599722/professionals/jnzcegnloipsjvqvzua0.jpg" alt="DJ Gallery 2" />
               <div class="slide-caption">DJ Gallery 2</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img3.jpeg" alt="DJ Gallery Photo 3" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1770598272/professionals/ewpj8xx2g3nxpmelfv6k.jpg" alt="DJ Gallery 3" />
               <div class="slide-caption">DJ Gallery 3</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img4.jpeg" alt="DJ Gallery Photo 4" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769958322/professionals/loo1peqzthzcw5s4wx6n.jpg" alt="DJ Gallery 4" />
               <div class="slide-caption">DJ Gallery 4</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img5.jpeg" alt="DJ Gallery Photo 5" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957563/professionals/lhivocwja1wdfemdzxx8.jpg" alt="DJ Gallery 5" />
               <div class="slide-caption">DJ Gallery 5</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img6.jpeg" alt="DJ Gallery Photo 6" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957565/professionals/cf5x15x5fagcwiuioan0.jpg" alt="DJ Gallery 6" />
               <div class="slide-caption">DJ Gallery 6</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img7.jpeg" alt="DJ Gallery Photo 7" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957562/professionals/exwjf6o89oy27kmcy9hx.jpg" alt="DJ Gallery 7" />
               <div class="slide-caption">DJ Gallery 7</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img8.jpeg" alt="DJ Gallery Photo 8" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957559/professionals/tfbpfgqlba2bpvq0d2o2.jpg" alt="DJ Gallery 8" />
               <div class="slide-caption">DJ Gallery 8</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img9.jpeg" alt="DJ Gallery Photo 9" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957559/professionals/l1fx1apoo0lygzg1kox1.jpg" alt="DJ Gallery 9" />
               <div class="slide-caption">DJ Gallery 9</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img10.jpeg" alt="DJ Gallery Photo 10" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957557/professionals/j3ffeinzxwbd1jcgrtmz.jpg" alt="DJ Gallery 10" />
               <div class="slide-caption">DJ Gallery 10</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img11.jpeg" alt="DJ Gallery Photo 11" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957507/professionals/e5cg3kp3kibd8a4oyig6.jpg" alt="DJ Gallery 11" />
               <div class="slide-caption">DJ Gallery 11</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img12.jpeg" alt="DJ Gallery Photo 12" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769957556/professionals/v9viqj3rmf2hgqzhdnsy.jpg" alt="DJ Gallery 12" />
               <div class="slide-caption">DJ Gallery 12</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img13.jpeg" alt="DJ Gallery Photo 13" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769942785/professionals/nbhi0kpwxnwc5xcdikiy.jpg" alt="DJ Gallery 13" />
               <div class="slide-caption">DJ Gallery 13</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img14.jpeg" alt="DJ Gallery Photo 14" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769942609/pulpl0acyxhjdbvpfjs9.jpg" alt="DJ Gallery 14" />
               <div class="slide-caption">DJ Gallery 14</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img15.jpeg" alt="DJ Gallery Photo 15" />
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769942604/rz5l8z3wm1pwzj6fwh7p.jpg" alt="DJ Gallery 15" />
               <div class="slide-caption">DJ Gallery 15</div>
             </div>
             <div class="carousel-slide">
-              <img src="images/img18.jpeg" alt="DJ Gallery Photo 18" />
-              <div class="slide-caption">DJ Gallery 18</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w1.jpeg" alt="DJ Event W1" />
-              <div class="slide-caption">DJ Event W1</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w2.jpeg" alt="DJ Event W2" />
-              <div class="slide-caption">DJ Event W2</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w3.jpeg" alt="DJ Event W3" />
-              <div class="slide-caption">DJ Event W3</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w4.jpeg" alt="DJ Event W4" />
-              <div class="slide-caption">DJ Event W4</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w5 tictoc.jpeg" alt="DJ Event W5 TikTok" />
-              <div class="slide-caption">DJ Event W5 TikTok</div>
-            </div>
-            <div class="carousel-slide">
-              <img
-                src="images/w6flyingboat.jpeg"
-                alt="DJ Event W6 Flying Boat"
-              />
-              <div class="slide-caption">DJ Event W6 Flying Boat</div>
-            </div>
-            <div class="carousel-slide">
-              <img
-                src="images/w7senegalaise.jpeg"
-                alt="DJ Event W7 Senegalaise"
-              />
-              <div class="slide-caption">DJ Event W7 Senegalaise</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w9 boks.jpeg" alt="DJ Event W9 Boks" />
-              <div class="slide-caption">DJ Event W9 Boks</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w10vina.jpeg" alt="DJ Event W10 Vina" />
-              <div class="slide-caption">DJ Event W10 Vina</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w11.jpeg" alt="DJ Event W11" />
-              <div class="slide-caption">DJ Event W11</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w12.jpeg" alt="DJ Event W12" />
-              <div class="slide-caption">DJ Event W12</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w15.jpeg" alt="DJ Event W15" />
-              <div class="slide-caption">DJ Event W15</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w16.jpeg" alt="DJ Event W16" />
-              <div class="slide-caption">DJ Event W16</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w17.jpeg" alt="DJ Event W17" />
-              <div class="slide-caption">DJ Event W17</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w18Mic.jpeg" alt="DJ Event W18 Microphone" />
-              <div class="slide-caption">DJ Event W18 Microphone</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w19.jpeg" alt="DJ Event W19" />
-              <div class="slide-caption">DJ Event W19</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/w20.jpeg" alt="DJ Event W20" />
-              <div class="slide-caption">DJ Event W20</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/pipi.jpeg" alt="DJ Pipi" />
-              <div class="slide-caption">DJ Pipi</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/pic1.jpeg" alt="DJ Picture 1" />
-              <div class="slide-caption">DJ Picture 1</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/pic2.jpeg" alt="DJ Picture 2" />
-              <div class="slide-caption">DJ Picture 2</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/pic3.jpeg" alt="DJ Picture 3" />
-              <div class="slide-caption">DJ Picture 3</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/pic4.jpeg" alt="DJ Picture 4" />
-              <div class="slide-caption">DJ Picture 4</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/pic5.jpeg" alt="DJ Picture 5" />
-              <div class="slide-caption">DJ Picture 5</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/pic6.jpeg" alt="DJ Picture 6" />
-              <div class="slide-caption">DJ Picture 6</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/pic7.jpeg" alt="DJ Picture 7" />
-              <div class="slide-caption">DJ Picture 7</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsam petitcoat.jpeg" alt="DJ Sam Petitcoat" />
-              <div class="slide-caption">DJ Sam Petitcoat</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djgroove.png" alt="DJ Groove" />
-              <div class="slide-caption">DJ Groove</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/djsam_piste.jpeg" alt="DJ Sam Piste" />
-              <div class="slide-caption">DJ Sam Piste</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/bath.jpeg" alt="Bath" />
-              <div class="slide-caption">Bath</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/paris.jpeg" alt="Paris" />
-              <div class="slide-caption">Paris</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/sit.jpeg" alt="Sit" />
-              <div class="slide-caption">Sit</div>
-            </div>
-            <div class="carousel-slide">
-              <img src="images/micmonster.jpeg" alt="Mic Monster" />
-              <div class="slide-caption">Mic Monster</div>
+              <img src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1769914872/professionals/y7tlq0vjuxttjcxudbzg.jpg" alt="DJ Gallery 16" />
+              <div class="slide-caption">DJ Gallery 16</div>
             </div>
           </div>
+        </div>
           <div class="carousel-controls">
+            <button id="uploadGalleryBtn" class="gallery-upload-btn">
+              <i class="fa fa-cloud-upload"></i> Upload Photo
+            </button>
             <button class="carousel-btn prev-btn" onclick="changeSlide(-1)">
               <i class="fa fa-chevron-left"></i>
             </button>
-            <div class="carousel-indicators">
+                        <div class="carousel-indicators">
               <span class="indicator active" onclick="currentSlide(1)"></span>
               <span class="indicator" onclick="currentSlide(2)"></span>
               <span class="indicator" onclick="currentSlide(3)"></span>
@@ -678,52 +505,6 @@
               <span class="indicator" onclick="currentSlide(14)"></span>
               <span class="indicator" onclick="currentSlide(15)"></span>
               <span class="indicator" onclick="currentSlide(16)"></span>
-              <span class="indicator" onclick="currentSlide(17)"></span>
-              <span class="indicator" onclick="currentSlide(18)"></span>
-              <span class="indicator" onclick="currentSlide(19)"></span>
-              <span class="indicator" onclick="currentSlide(20)"></span>
-              <span class="indicator" onclick="currentSlide(21)"></span>
-              <span class="indicator" onclick="currentSlide(22)"></span>
-              <span class="indicator" onclick="currentSlide(23)"></span>
-              <span class="indicator" onclick="currentSlide(24)"></span>
-              <span class="indicator" onclick="currentSlide(25)"></span>
-              <span class="indicator" onclick="currentSlide(26)"></span>
-              <span class="indicator" onclick="currentSlide(27)"></span>
-              <span class="indicator" onclick="currentSlide(28)"></span>
-              <span class="indicator" onclick="currentSlide(29)"></span>
-              <span class="indicator" onclick="currentSlide(30)"></span>
-              <span class="indicator" onclick="currentSlide(31)"></span>
-              <span class="indicator" onclick="currentSlide(32)"></span>
-              <span class="indicator" onclick="currentSlide(33)"></span>
-              <span class="indicator" onclick="currentSlide(34)"></span>
-              <span class="indicator" onclick="currentSlide(35)"></span>
-              <span class="indicator" onclick="currentSlide(36)"></span>
-              <span class="indicator" onclick="currentSlide(37)"></span>
-              <span class="indicator" onclick="currentSlide(38)"></span>
-              <span class="indicator" onclick="currentSlide(39)"></span>
-              <span class="indicator" onclick="currentSlide(40)"></span>
-              <span class="indicator" onclick="currentSlide(41)"></span>
-              <span class="indicator" onclick="currentSlide(42)"></span>
-              <span class="indicator" onclick="currentSlide(43)"></span>
-              <span class="indicator" onclick="currentSlide(44)"></span>
-              <span class="indicator" onclick="currentSlide(45)"></span>
-              <span class="indicator" onclick="currentSlide(46)"></span>
-              <span class="indicator" onclick="currentSlide(47)"></span>
-              <span class="indicator" onclick="currentSlide(48)"></span>
-              <span class="indicator" onclick="currentSlide(49)"></span>
-              <span class="indicator" onclick="currentSlide(50)"></span>
-              <span class="indicator" onclick="currentSlide(51)"></span>
-              <span class="indicator" onclick="currentSlide(52)"></span>
-              <span class="indicator" onclick="currentSlide(53)"></span>
-              <span class="indicator" onclick="currentSlide(54)"></span>
-              <span class="indicator" onclick="currentSlide(55)"></span>
-              <span class="indicator" onclick="currentSlide(56)"></span>
-              <span class="indicator" onclick="currentSlide(57)"></span>
-              <span class="indicator" onclick="currentSlide(58)"></span>
-              <span class="indicator" onclick="currentSlide(59)"></span>
-              <span class="indicator" onclick="currentSlide(60)"></span>
-              <span class="indicator" onclick="currentSlide(61)"></span>
-              <span class="indicator" onclick="currentSlide(62)"></span>
             </div>
             <button class="carousel-btn next-btn" onclick="changeSlide(1)">
               <i class="fa fa-chevron-right"></i>
@@ -744,7 +525,7 @@
             .then((registration) => {
               console.log(
                 'ServiceWorker registration successful with scope: ',
-                registration.scope
+                registration.scope,
               )
 
               // Check for updates periodically
@@ -856,7 +637,7 @@
                     deferredPrompt.prompt()
                     const { outcome } = await deferredPrompt.userChoice
                     console.log(
-                      `User response to the install prompt: ${outcome}`
+                      `User response to the install prompt: ${outcome}`,
                     )
                     deferredPrompt = null
                     installBtn.remove()
@@ -917,7 +698,7 @@
           // Unregister service worker
           const registrations = await navigator.serviceWorker.getRegistrations()
           await Promise.all(
-            registrations.map((registration) => registration.unregister())
+            registrations.map((registration) => registration.unregister()),
           )
 
           // Hard reload
