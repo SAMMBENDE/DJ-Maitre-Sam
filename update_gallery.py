@@ -31,7 +31,7 @@ cloudinary_urls = [
     "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772290969/zc6yyqluuwrldek3vw61.jpg",
     "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772295791/Screenshot_20260106_231435_CapCut_n9iacd.jpg",
     "https://res.cloudinary.com/dkd3k6eau/image/upload/v1772233915/WhatsApp_Image_2026-02-28_at_00.07.36_dugcoy.jpg",
-    
+
 ]
 
 # Build new carousel slides
@@ -52,6 +52,6 @@ if match:
     content = content[:match.start()] + new_slides + content[match.end():]
     with open("index.html", "w") as f:
         f.write(content)
-    print("Success: Gallery updated with 16 Cloudinary images")
+    print("Success: Gallery updated with 25 Cloudinary images")
 else:
     print("Error: Could not find carousel-container to replace")
