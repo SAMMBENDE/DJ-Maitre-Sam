@@ -510,6 +510,29 @@ function showCloudinarySuccess(message, color) {
   setTimeout(() => notification.remove(), 4000)
 }
 
+function setGitHubToken() {
+  const existing = localStorage.getItem('gh_djsam_token')
+  const msg = existing
+    ? 'A token is already saved. Enter a new one to replace it, or cancel to keep it:'
+    : 'Enter your GitHub Personal Access Token to enable live publishing:'
+  const token = prompt(msg)
+  if (token && token.trim()) {
+    localStorage.setItem('gh_djsam_token', token.trim())
+    showCloudinarySuccess(
+      '✅ Token saved! Uploads will now publish live for everyone.',
+      '#27ae60',
+    )
+  } else if (token === '') {
+    localStorage.removeItem('gh_djsam_token')
+    showCloudinarySuccess('🗑️ Token cleared.', '#e67e22')
+  }
+}
+
+document.getElementById('setTokenBtn').addEventListener('click', () => {
+  if (!checkUploadAuth()) return
+  setGitHubToken()
+})
+
 async function pushPhotoToGitHub(imageUrl, imageName) {
   let token = localStorage.getItem('gh_djsam_token')
   if (!token) {
