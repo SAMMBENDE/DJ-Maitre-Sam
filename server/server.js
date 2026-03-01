@@ -48,7 +48,8 @@ app.get('/images', async (req, res) => {
 
 app.post('/images', async (req, res) => {
   const { url, name, password } = req.body
-  if (password !== UPLOAD_PASSWORD) return res.status(401).json({ error: 'Unauthorized' })
+  if (password !== UPLOAD_PASSWORD)
+    return res.status(401).json({ error: 'Unauthorized' })
   if (!url) return res.status(400).json({ error: 'url is required' })
   try {
     const image = await Image.findOneAndUpdate(
@@ -64,7 +65,8 @@ app.post('/images', async (req, res) => {
 
 app.delete('/images/:id', async (req, res) => {
   const { password } = req.body
-  if (password !== UPLOAD_PASSWORD) return res.status(401).json({ error: 'Unauthorized' })
+  if (password !== UPLOAD_PASSWORD)
+    return res.status(401).json({ error: 'Unauthorized' })
   try {
     await Image.findByIdAndDelete(req.params.id)
     res.json({ message: 'Deleted' })
@@ -86,8 +88,10 @@ app.get('/tracks', async (req, res) => {
 
 app.post('/tracks', async (req, res) => {
   const { title, url, category, password } = req.body
-  if (password !== UPLOAD_PASSWORD) return res.status(401).json({ error: 'Unauthorized' })
-  if (!title || !url) return res.status(400).json({ error: 'title and url are required' })
+  if (password !== UPLOAD_PASSWORD)
+    return res.status(401).json({ error: 'Unauthorized' })
+  if (!title || !url)
+    return res.status(400).json({ error: 'title and url are required' })
   try {
     const track = await Track.findOneAndUpdate(
       { url },
@@ -102,7 +106,8 @@ app.post('/tracks', async (req, res) => {
 
 app.delete('/tracks/:id', async (req, res) => {
   const { password } = req.body
-  if (password !== UPLOAD_PASSWORD) return res.status(401).json({ error: 'Unauthorized' })
+  if (password !== UPLOAD_PASSWORD)
+    return res.status(401).json({ error: 'Unauthorized' })
   try {
     await Track.findByIdAndDelete(req.params.id)
     res.json({ message: 'Deleted' })
@@ -119,8 +124,6 @@ app.get('/admin', (req, res) => {
 
 // ── Root ─────────────────────────────────────────────────────
 
-app.get('/', (req, res) =>
-  res.json({ status: 'DJ Maitre Sam API running' }),
-)
+app.get('/', (req, res) => res.json({ status: 'DJ Maitre Sam API v2 running' }))
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
