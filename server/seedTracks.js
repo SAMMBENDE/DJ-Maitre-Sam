@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const trackSchema = new mongoose.Schema({
   title: { type: String, required: true },
   url: { type: String, required: true, unique: true },
-  category: { type: String, enum: ['afro', 'zouk', 'funk'], default: 'afro' },
+  category: { type: String, enum: ['afro', 'zouk'], default: 'afro' },
   createdAt: { type: Date, default: Date.now },
 })
 const Track = mongoose.model('Track', trackSchema)
@@ -85,17 +85,17 @@ const tracks = [
   },
   { title: 'Django', url: BASE + 'Django.mp3', category: 'zouk' },
 
-  // ── Hits (funk) ──────────────────────────────────────────
-  { title: 'DjSaM FlashBack', url: BASE + 'flashBack.mp3', category: 'funk' },
+  // ── Moved from Hits → Mixtapes ───────────────────────────
+  { title: 'DjSaM FlashBack', url: BASE + 'flashBack.mp3', category: 'afro' },
   {
     title: 'DjSaM Greatest Old School Hip-Hop',
     url: BASE + 'greatest%20oldSchool.mp3',
-    category: 'funk',
+    category: 'afro',
   },
   {
     title: 'DjSaM Fally Vs R.Bona',
     url: BASE + 'faally_bona.mp3',
-    category: 'funk',
+    category: 'afro',
   },
 ]
 

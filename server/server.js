@@ -31,7 +31,7 @@ const Image = mongoose.model('Image', imageSchema)
 const trackSchema = new mongoose.Schema({
   title: { type: String, required: true },
   url: { type: String, required: true, unique: true },
-  category: { type: String, enum: ['afro', 'zouk', 'funk'], default: 'afro' },
+  category: { type: String, enum: ['afro', 'zouk'], default: 'afro' },
   createdAt: { type: Date, default: Date.now },
 })
 const Track = mongoose.model('Track', trackSchema)
@@ -129,6 +129,67 @@ app.delete('/tracks/:id', async (req, res) => {
   try {
     await Track.findByIdAndDelete(req.params.id)
     res.json({ message: 'Deleted' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── Booking Calendar Schema & Routes ─────────────────────────
+
+const bookingSchema = new mongoose.Schema({
+  date: { type: String, required: true, unique: true }, // YYYY-MM-DD
+  status: {
+    type: String,
+    enum: ['available', 'booked', 'unavailable'],
+    required: true,
+  },
+  note: { type: String, default: '' },
+  updatedAt: { type: Date, default: Date.now },
+})
+const Booking = mongoose.model('Booking', bookingSchema)
+
+// GET all bookings (public)
+app.get('/calendar', async (req, res) => {
+  try {
+    const bookings = await Booking.find().sort({ date: 1 })
+    res.json(bookings)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// PUT /calendar/:date — upsert status for a date (admin only)
+app.put('/calendar/:date', async (req, res) => {
+  const { status, note, password } = req.body
+  if (password !== UPLOAD_PASSWORD)
+    return res.status(401).json({ error: 'Unauthorized' })
+  const dateStr = req.params.date
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr))
+    return res
+      .status(400)
+      .json({ error: 'Invalid date format. Use YYYY-MM-DD' })
+  if (!['available', 'booked', 'unavailable'].includes(status))
+    return res.status(400).json({ error: 'Invalid status' })
+  try {
+    const booking = await Booking.findOneAndUpdate(
+      { date: dateStr },
+      { date: dateStr, status, note: note || '', updatedAt: new Date() },
+      { upsert: true, new: true },
+    )
+    res.json(booking)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// DELETE /calendar/:date — clear a date (admin only)
+app.delete('/calendar/:date', async (req, res) => {
+  const { password } = req.body
+  if (password !== UPLOAD_PASSWORD)
+    return res.status(401).json({ error: 'Unauthorized' })
+  try {
+    await Booking.findOneAndDelete({ date: req.params.date })
+    res.json({ message: 'Cleared' })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }

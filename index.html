@@ -3,20 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DjSaM Music Player</title>
+    <title>DJ Maitre Sam — Official Artist Page</title>
 
     <!-- PWA Meta Tags -->
-    <meta name="application-name" content="DJ Maitre Sam Music Player" />
+    <meta name="application-name" content="DJ Maitre Sam" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
       content="black-translucent"
     />
-    <meta name="apple-mobile-web-app-title" content="DjSaM Player" />
+    <meta name="apple-mobile-web-app-title" content="DJ Maitre Sam" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="theme-color" content="#ff6b35" />
-    <meta name="msapplication-TileColor" content="#1a1a1a" />
+    <meta name="theme-color" content="#d4af37" />
+    <meta name="msapplication-TileColor" content="#080808" />
     <meta name="msapplication-tap-highlight" content="no" />
+    <meta
+      name="description"
+      content="DJ Maitre Sam — Afrobeats, Zouk &amp; Global Hits. Book the experience."
+    />
 
     <!-- Manifest -->
     <link rel="manifest" href="manifest.json" />
@@ -36,12 +40,19 @@
       href="images/djgroove.png"
     />
 
+    <!-- Google Fonts — Luxury Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+      rel="stylesheet"
+    />
+
     <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
     />
-
   </head>
   <body>
     <input
@@ -50,7 +61,8 @@
       accept="audio/*"
       style="display: none"
     />
-    <!-- Floating Music Notes -->
+
+    <!-- Floating particles -->
     <div class="music-notes">
       <div class="music-note">♪</div>
       <div class="music-note">♫</div>
@@ -64,6 +76,7 @@
       <div class="music-note">♫</div>
     </div>
 
+    <!-- ── HEADER ──────────────────────────────────────────── -->
     <header class="player-header">
       <div class="logo-container">
         <img
@@ -77,75 +90,182 @@
           class="title-gif"
         />
       </div>
+      <button
+        class="settings-gear-btn"
+        id="openSettings"
+        title="Audio Settings"
+        aria-label="Open Audio Settings"
+      >
+        <i class="fa fa-sliders-h"></i>
+        <span class="gear-label">Audio Settings</span>
+      </button>
     </header>
+
+    <!-- ── ARTIST HERO ─────────────────────────────────────── -->
+    <section class="artist-hero">
+      <div class="hero-disc-wrapper">
+        <div class="disc-glow-ring"></div>
+        <img
+          src="images/original.gif"
+          alt="DJ Maitre Sam"
+          class="hero-disc"
+          id="heroDisc"
+        />
+      </div>
+
+      <p class="press-play-hint">
+        <i class="fa fa-headphones"></i> Press Play to Start the Experience
+      </p>
+
+      <div class="custom-player-controls">
+        <button
+          class="ctrl-btn"
+          id="prevBtn"
+          title="Previous Track"
+          aria-label="Previous"
+        >
+          <i class="fa fa-backward-step"></i>
+        </button>
+        <button
+          class="play-btn-dominant"
+          id="mainPlayBtn"
+          title="Play / Pause"
+          aria-label="Play or Pause"
+        >
+          <i class="fa fa-play" id="playIcon"></i>
+        </button>
+        <button
+          class="ctrl-btn"
+          id="nextBtn"
+          title="Next Track"
+          aria-label="Next"
+        >
+          <i class="fa fa-forward-step"></i>
+        </button>
+      </div>
+
+      <div class="now-playing-info">
+        <div class="equalizer" title="Equalizer" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <span id="currentTrackName">Select a track to begin...</span>
+      </div>
+
+      <!-- Hidden audio element — controlled by custom buttons -->
+      <audio id="audioPlayer" preload="none" crossorigin="anonymous"></audio>
+    </section>
+
+    <!-- ── BIO SECTION ────────────────────────────────────── -->
+    <section class="bio-section">
+      <button
+        class="bio-toggle"
+        id="bioToggle"
+        aria-expanded="false"
+        aria-controls="bioBody"
+      >
+        <span>About DjSaM & Music Genres</span>
+        <i class="fa fa-chevron-down bio-chevron"></i>
+      </button>
+      <div class="bio-body" id="bioBody">
+        <div class="bio-divider"></div>
+        <p class="bio-text">
+          DJ Maitre Sam is a high-energy, multi-genre DJ blending Afro beats and
+          global hits into seamless, cinematic sets that deliver an
+          unforgettable experience. With over a decade behind the decks, his
+          mastery of sound and crowd psychology has positioned him among the
+          most dynamic DJs of his generation.
+        </p>
+        <section class="genres-section">
+          <p>
+            Afro Beats • Amapiano • Makossa • Ndombolo • Coupé Décalé • Hiphop •
+            Urban • World • Shatta • Dancehall • Dance • Reggaeton • Funk • Zouk
+            • Kizomba • Rock n Roll • Disco
+          </p>
+        </section>
+      </div>
+    </section>
+
+    <!-- ── MUSIC SECTION ──────────────────────────────────── -->
     <section class="music-section">
       <div class="audio-box">
         <div class="playlist-tabs">
           <button class="tab-btn active" data-tab="afro">Mixtapes</button>
-          <button class="tab-btn" data-tab="zouk">Variétés</button>
-          <button class="tab-btn" data-tab="funk">Hits</button>
+          <button class="tab-btn" data-tab="calendar">Calendar</button>
           <button class="tab-btn" data-tab="gallery">Gallery</button>
         </div>
-        <div class="audio-controls">
-          <div class="control-group">
-            <label for="bassControl">Bass</label>
-            <input
-              type="range"
-              id="bassControl"
-              class="eq-slider"
-              min="-10"
-              max="10"
-              value="0"
-              step="1"
-            />
-            <span id="bassValue">0</span>
-          </div>
-          <div class="control-group">
-            <label for="trebleControl">Treble</label>
-            <input
-              type="range"
-              id="trebleControl"
-              class="eq-slider"
-              min="-10"
-              max="10"
-              value="0"
-              step="1"
-            />
-            <span id="trebleValue">0</span>
-          </div>
-        </div>
-        <div class="player-controls">
-          <div class="equalizer" title="Equalizer">
-            <span></span><span></span><span></span><span></span><span></span>
-          </div>
-          <button id="repeatBtn" title="Répéter la chanson" class="repeat-btn">
-            <span>🔁</span>
-          </button>
-          <audio id="audioPlayer" controls preload="none" crossorigin="anonymous"></audio>
-        </div>
+
         <ul
           id="playlist-afro"
           class="playlist category-list"
-          style="display: block"
-        >
-          <li class="playlist-loading" style="color:#888;padding:12px;">Loading tracks…</li>
-        </ul>
-
-        <ul
-          id="playlist-zouk"
-          class="playlist category-list"
           style="display: none"
         >
-          <li class="playlist-loading" style="color:#888;padding:12px;">Loading tracks…</li>
+          <li class="playlist-loading">Loading tracks…</li>
         </ul>
-
-        <ul
-          id="playlist-funk"
-          class="playlist category-list"
+        <!-- ── CALENDAR TAB ──────────────────────────────── -->
+        <div
+          id="playlist-calendar"
+          class="cal-wrapper category-list"
           style="display: none"
         >
-          <li class="playlist-loading" style="color:#888;padding:12px;">Loading tracks…</li>
-        </ul>
+          <!-- Month Navigation -->
+          <div class="cal-header">
+            <button
+              class="cal-nav-btn"
+              id="calPrev"
+              aria-label="Previous month"
+            >
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            <span class="cal-month-label" id="calMonthLabel"></span>
+            <button class="cal-nav-btn" id="calNext" aria-label="Next month">
+              <i class="fa fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- Day Names -->
+          <div class="cal-day-names">
+            <span>Sun</span><span>Mon</span><span>Tue</span> <span>Wed</span
+            ><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+
+          <!-- Date Grid (built by JS) -->
+          <div class="cal-grid" id="calGrid"></div>
+
+          <!-- Legend -->
+          <div class="cal-legend">
+            <span class="leg-item"
+              ><span class="leg-dot available"></span>Available</span
+            >
+            <span class="leg-item"
+              ><span class="leg-dot booked"></span>Booked</span
+            >
+            <span class="leg-item"
+              ><span class="leg-dot unavailable"></span>Unavailable</span
+            >
+          </div>
+
+          <!-- Status picker (shown only when admin unlocked via triple-click on Calendar tab) -->
+          <div class="cal-status-picker" id="calStatusPicker">
+            <p class="cal-picker-hint">Select a status, then tap a date:</p>
+            <div class="cal-status-btns">
+              <button
+                class="status-btn available active"
+                data-status="available"
+              >
+                <i class="fa fa-check-circle"></i> Available
+              </button>
+              <button class="status-btn booked" data-status="booked">
+                <i class="fa fa-times-circle"></i> Booked
+              </button>
+              <button class="status-btn unavailable" data-status="unavailable">
+                <i class="fa fa-ban"></i> Unavailable
+              </button>
+              <button class="status-btn clear" data-status="none">
+                <i class="fa fa-eraser"></i> Clear
+              </button>
+            </div>
+          </div>
+        </div>
 
         <div
           id="playlist-gallery"
@@ -153,11 +273,22 @@
           style="display: none"
         >
           <div class="carousel-container" id="carouselContainer">
-            <div class="gallery-loading" id="galleryLoading" style="display:flex;align-items:center;justify-content:center;min-height:300px;color:#aaa;font-size:1.1rem;">
+            <div
+              class="gallery-loading"
+              id="galleryLoading"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 300px;
+                color: #7a7870;
+                font-size: 1rem;
+              "
+            >
               Loading gallery…
             </div>
           </div>
-        </div>
+
           <div class="carousel-controls">
             <button class="carousel-btn prev-btn" onclick="changeSlide(-1)">
               <i class="fa fa-chevron-left"></i>
@@ -167,15 +298,122 @@
               <i class="fa fa-chevron-right"></i>
             </button>
           </div>
-          <div class="gallery-upload-row" id="galleryUploadRow" style="display:none;text-align:center;margin-top:12px;">
-            <button id="uploadGalleryBtn" style="background:#e74c3c;color:#fff;border:none;padding:9px 22px;border-radius:8px;cursor:pointer;font-size:0.95rem;font-weight:bold;letter-spacing:0.5px;">
+
+          <div
+            class="gallery-upload-row"
+            id="galleryUploadRow"
+            style="display: none; text-align: center; margin-top: 12px"
+          >
+            <button id="uploadGalleryBtn" class="gallery-upload-btn">
               <i class="fa fa-camera"></i> Upload Photo
             </button>
-            <input type="file" id="galleryUploadInput" accept="image/*" style="display:none" />
+            <input
+              type="file"
+              id="galleryUploadInput"
+              accept="image/*"
+              style="display: none"
+            />
           </div>
         </div>
       </div>
     </section>
+
+    <!-- ── AUDIO SETTINGS PANEL (slide-up) ───────────────── -->
+    <div class="panel-overlay" id="panelOverlay"></div>
+    <div
+      class="audio-settings-panel"
+      id="audioSettingsPanel"
+      role="dialog"
+      aria-label="Audio Settings"
+    >
+      <div class="panel-header">
+        <span><i class="fa fa-sliders-h"></i> Audio Settings</span>
+        <button
+          id="closeSettings"
+          class="close-panel-btn"
+          aria-label="Close settings"
+        >
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="panel-body">
+        <div class="control-group">
+          <label for="bassControl">Bass</label>
+          <input
+            type="range"
+            id="bassControl"
+            class="eq-slider"
+            min="-10"
+            max="10"
+            value="0"
+            step="1"
+          />
+          <span id="bassValue">0</span>
+        </div>
+        <div class="control-group">
+          <label for="trebleControl">Treble</label>
+          <input
+            type="range"
+            id="trebleControl"
+            class="eq-slider"
+            min="-10"
+            max="10"
+            value="0"
+            step="1"
+          />
+          <span id="trebleValue">0</span>
+        </div>
+        <div class="control-group repeat-row">
+          <label>Repeat</label>
+          <button
+            id="repeatBtn"
+            title="Répéter la chanson"
+            class="repeat-btn"
+            aria-label="Repeat mode"
+          >
+            <span>🔁</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ──────────────────────────────────────────── -->
+    <footer class="artist-footer">
+      <a href="mailto:djmaitresam@gmail.com" class="book-me-btn">
+        <i class="fa fa-calendar-check"></i> Bookings & Reservations
+      </a>
+      <div class="social-row">
+        <a
+          href="https://www.instagram.com/dj_maitresam"
+          target="_blank"
+          rel="noopener"
+          class="social-icon instagram"
+          title="Instagram"
+        >
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a
+          href="https://www.tiktok.com/@djmaitresam"
+          target="_blank"
+          rel="noopener"
+          class="social-icon tiktok"
+          title="TikTok"
+        >
+          <i class="fab fa-tiktok"></i>
+        </a>
+        <a
+          href="https://www.youtube.com/@DJMaitreSam"
+          target="_blank"
+          rel="noopener"
+          class="social-icon youtube"
+          title="YouTube"
+        >
+          <i class="fab fa-youtube"></i>
+        </a>
+      </div>
+      <p class="footer-copy">© 2026 DJ Maitre Sam · All Rights Reserved</p>
+    </footer>
+
     <script src="script.js"></script>
 
     <!-- PWA Service Worker Registration -->

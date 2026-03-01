@@ -333,23 +333,39 @@ audioPlayer.addEventListener('ended', function () {
 // Tab switching
 tabBtns.forEach((btn) => {
   btn.addEventListener('click', function () {
+    const targetId = 'playlist-' + this.dataset.tab
+    const targetPanel = document.getElementById(targetId)
+    const isAlreadyOpen = this.classList.contains('active')
+
+    // Collapse all
     tabBtns.forEach((b) => b.classList.remove('active'))
-    this.classList.add('active')
-    categoryLists.forEach((list) => (list.style.display = 'none'))
-    document.getElementById('playlist-' + this.dataset.tab).style.display =
-      'block'
-    // Play first song in selected category
-    const items = document.querySelectorAll(
-      '#playlist-' + this.dataset.tab + ' li',
-    )
-    if (items.length > 0) {
-      categoryLists.forEach((list) => {
-        list
-          .querySelectorAll('li')
-          .forEach((li) => li.classList.remove('active'))
-      })
-      items[0].classList.add('active')
-      audioPlayer.src = items[0].dataset.src
+    categoryLists.forEach((list) => {
+      list.classList.remove('panel-open')
+      list.style.display = 'none'
+    })
+
+    // If it wasn't open, open it now
+    if (!isAlreadyOpen && targetPanel) {
+      this.classList.add('active')
+      targetPanel.style.display = 'block'
+      targetPanel.classList.add('panel-open')
+
+      // Lazy-load calendar on first open
+      setTimeout(() => {
+        if (typeof maybeLoadCalendar === 'function') maybeLoadCalendar()
+      }, 50)
+
+      // Highlight first track in playlist
+      const items = targetPanel.querySelectorAll('li[data-src]')
+      if (items.length > 0) {
+        categoryLists.forEach((list) =>
+          list
+            .querySelectorAll('li')
+            .forEach((li) => li.classList.remove('active')),
+        )
+        items[0].classList.add('active')
+        audioPlayer.src = items[0].dataset.src
+      }
     }
   })
 })
@@ -541,24 +557,50 @@ function showSuccessMessage(message) {
 const uploadGalleryBtn = document.getElementById('uploadGalleryBtn')
 const galleryUploadInput = document.getElementById('galleryUploadInput')
 
-// Secret trigger: triple-click the Gallery tab button to reveal upload
+// Secret trigger: triple-click Gallery or Calendar tab to reveal admin controls
 ;(function () {
   const galleryTabBtn = document.querySelector('[data-tab="gallery"]')
-  if (!galleryTabBtn) return
-  let clickCount = 0
-  let clickTimer = null
-  galleryTabBtn.addEventListener('click', () => {
-    clickCount++
-    clearTimeout(clickTimer)
-    clickTimer = setTimeout(() => {
-      clickCount = 0
-    }, 600)
-    if (clickCount >= 3) {
-      clickCount = 0
-      if (!sessionStorage.getItem('uploadAuth')) checkUploadAuth()
-      else revealUploadButton()
-    }
-  })
+  if (galleryTabBtn) {
+    let gc = 0,
+      gt = null
+    galleryTabBtn.addEventListener('click', () => {
+      gc++
+      clearTimeout(gt)
+      gt = setTimeout(() => {
+        gc = 0
+      }, 600)
+      if (gc >= 3) {
+        gc = 0
+        if (!sessionStorage.getItem('uploadAuth')) checkUploadAuth()
+        else revealUploadButton()
+      }
+    })
+  }
+
+  const calTabBtn = document.querySelector('[data-tab="calendar"]')
+  if (calTabBtn) {
+    let cc = 0,
+      ct = null
+    calTabBtn.addEventListener('click', () => {
+      cc++
+      clearTimeout(ct)
+      ct = setTimeout(() => {
+        cc = 0
+      }, 600)
+      if (cc >= 3) {
+        cc = 0
+        // Toggle: lock if already unlocked
+        if (window._calAdminMode) {
+          window._lockCalAdmin()
+        } else if (sessionStorage.getItem('uploadAuth')) {
+          window._unlockCalAdmin()
+        } else {
+          checkUploadAuth()
+          if (sessionStorage.getItem('uploadAuth')) window._unlockCalAdmin()
+        }
+      }
+    })
+  }
 })()
 
 if (uploadGalleryBtn && galleryUploadInput) {
@@ -612,7 +654,7 @@ async function loadTracksFromAPI() {
     const tracks = await res.json()
     if (!tracks.length) return
 
-    const categories = ['afro', 'zouk', 'funk']
+    const categories = ['afro']
     categories.forEach((cat) => {
       const ul = document.getElementById('playlist-' + cat)
       if (!ul) return
@@ -658,3 +700,370 @@ window.addEventListener('load', () => {
     revealUploadButton()
   }
 })
+
+// ═══════════════════════════════════════════════════════════
+//  ARTIST PAGE — Custom Controls & Audio Settings Panel
+//  All wired up inside 'load' so tracks are ready.
+// ═══════════════════════════════════════════════════════════
+
+// Global so onclick attributes in HTML can also call them
+function openAudioPanel() {
+  const panel = document.getElementById('audioSettingsPanel')
+  const overlay = document.getElementById('panelOverlay')
+  if (panel) panel.classList.add('open')
+  if (overlay) overlay.classList.add('visible')
+}
+function closeAudioPanel() {
+  const panel = document.getElementById('audioSettingsPanel')
+  const overlay = document.getElementById('panelOverlay')
+  if (panel) panel.classList.remove('open')
+  if (overlay) overlay.classList.remove('visible')
+}
+
+window.addEventListener('load', () => {
+  // ── Helper: get real track items from visible playlist ─────
+  function getActiveTracks() {
+    const lists = Array.from(document.querySelectorAll('.category-list'))
+    const visible = lists.find(
+      (el) => el.tagName === 'UL' && el.style.display !== 'none',
+    )
+    return visible ? Array.from(visible.querySelectorAll('li[data-src]')) : []
+  }
+
+  function playTrack(li) {
+    if (!li || !li.dataset.src) return
+    document
+      .querySelectorAll('.category-list li')
+      .forEach((el) => el.classList.remove('active'))
+    li.classList.add('active')
+    audioPlayer.src = li.dataset.src
+    audioPlayer.play().catch(() => {})
+  }
+
+  // ── Play / Pause ───────────────────────────────────────────
+  const mainPlayBtn = document.getElementById('mainPlayBtn')
+  if (mainPlayBtn) {
+    mainPlayBtn.addEventListener('click', () => {
+      if (!audioPlayer.src) {
+        const tracks = getActiveTracks()
+        if (tracks.length) playTrack(tracks[0])
+        return
+      }
+      audioPlayer.paused
+        ? audioPlayer.play().catch(() => {})
+        : audioPlayer.pause()
+    })
+  }
+
+  // ── Previous track ─────────────────────────────────────────
+  const prevBtnEl = document.getElementById('prevBtn')
+  if (prevBtnEl) {
+    prevBtnEl.addEventListener('click', () => {
+      const tracks = getActiveTracks()
+      if (!tracks.length) return
+      const idx = tracks.findIndex((li) => li.classList.contains('active'))
+      const prevIdx = idx <= 0 ? tracks.length - 1 : idx - 1
+      playTrack(tracks[prevIdx])
+    })
+  }
+
+  // ── Next track ─────────────────────────────────────────────
+  const nextBtnEl = document.getElementById('nextBtn')
+  if (nextBtnEl) {
+    nextBtnEl.addEventListener('click', () => {
+      const tracks = getActiveTracks()
+      if (!tracks.length) return
+      const idx = tracks.findIndex((li) => li.classList.contains('active'))
+      const nextIdx = (idx + 1) % tracks.length
+      playTrack(tracks[nextIdx])
+    })
+  }
+
+  // ── Sync UI to audio state ─────────────────────────────────
+  const playIconEl = document.getElementById('playIcon')
+  const heroDiscEl = document.getElementById('heroDisc')
+  const nowPlayingRow = document.querySelector('.now-playing-info')
+  const trackNameEl = document.getElementById('currentTrackName')
+
+  function updateNowPlaying() {
+    const active = document.querySelector('.category-list li.active')
+    if (active && trackNameEl) {
+      const text = Array.from(active.childNodes)
+        .filter((n) => n.nodeType === Node.TEXT_NODE)
+        .map((n) => n.textContent.trim())
+        .join(' ')
+        .trim()
+      trackNameEl.textContent = text || 'Now Playing…'
+    }
+  }
+
+  audioPlayer.addEventListener('play', () => {
+    if (playIconEl) {
+      playIconEl.classList.remove('fa-play')
+      playIconEl.classList.add('fa-pause')
+    }
+    if (heroDiscEl) heroDiscEl.classList.add('spinning')
+    if (nowPlayingRow) nowPlayingRow.classList.add('playing')
+    updateNowPlaying()
+  })
+
+  audioPlayer.addEventListener('pause', () => {
+    if (playIconEl) {
+      playIconEl.classList.remove('fa-pause')
+      playIconEl.classList.add('fa-play')
+    }
+    if (heroDiscEl) heroDiscEl.classList.remove('spinning')
+    if (nowPlayingRow) nowPlayingRow.classList.remove('playing')
+  })
+
+  audioPlayer.addEventListener('ended', () => {
+    if (playIconEl) {
+      playIconEl.classList.remove('fa-pause')
+      playIconEl.classList.add('fa-play')
+    }
+    if (heroDiscEl) heroDiscEl.classList.remove('spinning')
+    if (nowPlayingRow) nowPlayingRow.classList.remove('playing')
+  })
+
+  // ── Audio Settings Panel listeners ────────────────────────
+  const openSettingsBtn = document.getElementById('openSettings')
+  const closeSettingsBtn = document.getElementById('closeSettings')
+  const panelOverlayEl = document.getElementById('panelOverlay')
+
+  if (openSettingsBtn) openSettingsBtn.addEventListener('click', openAudioPanel)
+  if (closeSettingsBtn)
+    closeSettingsBtn.addEventListener('click', closeAudioPanel)
+  if (panelOverlayEl) panelOverlayEl.addEventListener('click', closeAudioPanel)
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAudioPanel()
+  })
+
+  // ── Bio accordion (mobile) ─────────────────────────────────
+  const bioToggle = document.getElementById('bioToggle')
+  const bioBody = document.getElementById('bioBody')
+  if (bioToggle && bioBody) {
+    bioToggle.addEventListener('click', () => {
+      const open = bioToggle.getAttribute('aria-expanded') === 'true'
+      bioToggle.setAttribute('aria-expanded', String(!open))
+      bioBody.classList.toggle('bio-open', !open)
+    })
+  }
+  // ── Booking Calendar ─────────────────────────────────────
+  let calYear = new Date().getFullYear()
+  let calMonth = new Date().getMonth() // 0-indexed
+  let calBookings = {} // key: 'YYYY-MM-DD', value: 'available'|'booked'|'unavailable'
+  let calAdminMode = false
+  let calSelectedStatus = 'available'
+
+  const calGrid = document.getElementById('calGrid')
+  const calMonthLabel = document.getElementById('calMonthLabel')
+  const calPrev = document.getElementById('calPrev')
+  const calNext = document.getElementById('calNext')
+  const calAdminToggle = document.getElementById('calAdminToggle')
+  const calStatusPicker = document.getElementById('calStatusPicker')
+
+  const MONTH_NAMES = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ]
+
+  function pad(n) {
+    return String(n).padStart(2, '0')
+  }
+  function dateKey(y, m, d) {
+    return `${y}-${pad(m + 1)}-${pad(d)}`
+  }
+
+  function saveCalendarLocal() {
+    try {
+      localStorage.setItem('djsam_calendar', JSON.stringify(calBookings))
+    } catch (_) {}
+  }
+
+  function renderCalendar() {
+    if (!calGrid || !calMonthLabel) return
+    calMonthLabel.textContent = MONTH_NAMES[calMonth] + ' ' + calYear
+    calGrid.innerHTML = ''
+
+    const today = new Date()
+    const todayKey = dateKey(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    )
+    const firstDay = new Date(calYear, calMonth, 1).getDay() // 0=Sun
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate()
+
+    // Empty spacers for day-of-week offset
+    for (let i = 0; i < firstDay; i++) {
+      const blank = document.createElement('div')
+      blank.className = 'cal-day empty'
+      calGrid.appendChild(blank)
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key = dateKey(calYear, calMonth, d)
+      const cell = document.createElement('div')
+      cell.className = 'cal-day'
+      cell.textContent = d
+      cell.dataset.date = key
+
+      // Past dates
+      const cellDate = new Date(calYear, calMonth, d)
+      if (
+        cellDate <
+        new Date(today.getFullYear(), today.getMonth(), today.getDate())
+      ) {
+        cell.classList.add('past')
+      }
+      if (key === todayKey) cell.classList.add('today')
+      if (calBookings[key]) cell.classList.add(calBookings[key])
+
+      if (calAdminMode) {
+        cell.addEventListener('click', () => onAdminDayClick(key, cell))
+      }
+      calGrid.appendChild(cell)
+    }
+
+    if (calAdminMode) {
+      calGrid.classList.add('cal-admin-active')
+    } else {
+      calGrid.classList.remove('cal-admin-active')
+    }
+  }
+
+  async function onAdminDayClick(key, cell) {
+    const password = UPLOAD_PASSWORD
+    if (!password) return
+
+    if (calSelectedStatus === 'none') {
+      // Remove status
+      delete calBookings[key]
+      try {
+        await fetch(GALLERY_API_URL + '/calendar/' + key, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password }),
+        })
+      } catch (_) {
+        saveCalendarLocal()
+      }
+    } else {
+      calBookings[key] = calSelectedStatus
+      try {
+        const r = await fetch(GALLERY_API_URL + '/calendar/' + key, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: calSelectedStatus, password }),
+        })
+        if (!r.ok) throw new Error('API')
+      } catch (_) {
+        saveCalendarLocal()
+      }
+    }
+    renderCalendar()
+  }
+
+  async function loadCalendar() {
+    // Try API first
+    try {
+      const r = await fetch(GALLERY_API_URL + '/calendar')
+      if (!r.ok) throw new Error('API')
+      const data = await r.json() // [{date, status}...]
+      calBookings = {}
+      data.forEach((b) => {
+        calBookings[b.date] = b.status
+      })
+    } catch (_) {
+      // Fallback: localStorage
+      try {
+        const stored = localStorage.getItem('djsam_calendar')
+        if (stored) calBookings = JSON.parse(stored)
+      } catch (__) {}
+    }
+    renderCalendar()
+  }
+
+  // Prev/Next month
+  if (calPrev)
+    calPrev.addEventListener('click', () => {
+      calMonth--
+      if (calMonth < 0) {
+        calMonth = 11
+        calYear--
+      }
+      renderCalendar()
+    })
+  if (calNext)
+    calNext.addEventListener('click', () => {
+      calMonth++
+      if (calMonth > 11) {
+        calMonth = 0
+        calYear++
+      }
+      renderCalendar()
+    })
+
+  function unlockAdmin() {
+    calAdminMode = true
+    window._calAdminMode = true
+    if (calStatusPicker) calStatusPicker.classList.add('visible')
+    renderCalendar()
+  }
+
+  function lockAdmin() {
+    calAdminMode = false
+    window._calAdminMode = false
+    if (calStatusPicker) calStatusPicker.classList.remove('visible')
+    renderCalendar()
+  }
+
+  window._unlockCalAdmin = unlockAdmin
+  window._lockCalAdmin = lockAdmin
+
+  // Auto-unlock if session already authenticated
+  if (sessionStorage.getItem('uploadAuth')) unlockAdmin()
+
+  // Status picker buttons
+  if (calStatusPicker) {
+    calStatusPicker.querySelectorAll('.status-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        calStatusPicker
+          .querySelectorAll('.status-btn')
+          .forEach((b) => b.classList.remove('active'))
+        btn.classList.add('active')
+        calSelectedStatus = btn.dataset.status
+      })
+    })
+  }
+
+  // Load calendar when tab is first shown
+  let calLoaded = false
+  function maybeLoadCalendar() {
+    const calTab = document.getElementById('playlist-calendar')
+    if (calTab && calTab.style.display !== 'none' && !calLoaded) {
+      calLoaded = true
+      loadCalendar()
+    }
+  }
+
+  // Hook into existing tab switching
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setTimeout(maybeLoadCalendar, 50)
+    })
+  })
+  // Also check immediately in case calendar is the default visible tab
+  maybeLoadCalendar()
+}) // end load
