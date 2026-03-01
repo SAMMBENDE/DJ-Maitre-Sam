@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const path = require('path')
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -17,16 +18,25 @@ mongoose
   .then(() => console.log('✓ Connected to MongoDB Atlas'))
   .catch((err) => console.error('MongoDB connection error:', err))
 
-// Image schema
+// ── Schemas ──────────────────────────────────────────────────
+
 const imageSchema = new mongoose.Schema({
   url: { type: String, required: true, unique: true },
   name: { type: String, default: 'Gallery Photo' },
   createdAt: { type: Date, default: Date.now },
 })
-
 const Image = mongoose.model('Image', imageSchema)
 
-// GET /images — return all images sorted oldest first
+const trackSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  url: { type: String, required: true, unique: true },
+  category: { type: String, enum: ['afro', 'zouk', 'funk'], default: 'afro' },
+  createdAt: { type: Date, default: Date.now },
+})
+const Track = mongoose.model('Track', trackSchema)
+
+// ── Image routes ─────────────────────────────────────────────
+
 app.get('/images', async (req, res) => {
   try {
     const images = await Image.find().sort({ createdAt: 1 })
@@ -36,15 +46,10 @@ app.get('/images', async (req, res) => {
   }
 })
 
-// POST /images — save a new image (password protected)
 app.post('/images', async (req, res) => {
   const { url, name, password } = req.body
-  if (password !== UPLOAD_PASSWORD) {
-    return res.status(401).json({ error: 'Unauthorized' })
-  }
-  if (!url) {
-    return res.status(400).json({ error: 'url is required' })
-  }
+  if (password !== UPLOAD_PASSWORD) return res.status(401).json({ error: 'Unauthorized' })
+  if (!url) return res.status(400).json({ error: 'url is required' })
   try {
     const image = await Image.findOneAndUpdate(
       { url },
@@ -57,12 +62,9 @@ app.post('/images', async (req, res) => {
   }
 })
 
-// DELETE /images/:id — remove an image (password protected)
 app.delete('/images/:id', async (req, res) => {
   const { password } = req.body
-  if (password !== UPLOAD_PASSWORD) {
-    return res.status(401).json({ error: 'Unauthorized' })
-  }
+  if (password !== UPLOAD_PASSWORD) return res.status(401).json({ error: 'Unauthorized' })
   try {
     await Image.findByIdAndDelete(req.params.id)
     res.json({ message: 'Deleted' })
@@ -71,8 +73,54 @@ app.delete('/images/:id', async (req, res) => {
   }
 })
 
+// ── Track routes ─────────────────────────────────────────────
+
+app.get('/tracks', async (req, res) => {
+  try {
+    const tracks = await Track.find().sort({ createdAt: 1 })
+    res.json(tracks)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+app.post('/tracks', async (req, res) => {
+  const { title, url, category, password } = req.body
+  if (password !== UPLOAD_PASSWORD) return res.status(401).json({ error: 'Unauthorized' })
+  if (!title || !url) return res.status(400).json({ error: 'title and url are required' })
+  try {
+    const track = await Track.findOneAndUpdate(
+      { url },
+      { title, url, category: category || 'afro' },
+      { upsert: true, new: true },
+    )
+    res.status(201).json(track)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+app.delete('/tracks/:id', async (req, res) => {
+  const { password } = req.body
+  if (password !== UPLOAD_PASSWORD) return res.status(401).json({ error: 'Unauthorized' })
+  try {
+    await Track.findByIdAndDelete(req.params.id)
+    res.json({ message: 'Deleted' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── Admin dashboard ──────────────────────────────────────────
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'))
+})
+
+// ── Root ─────────────────────────────────────────────────────
+
 app.get('/', (req, res) =>
-  res.json({ status: 'DJ Maitre Sam Gallery API running' }),
+  res.json({ status: 'DJ Maitre Sam API running' }),
 )
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
