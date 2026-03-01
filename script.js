@@ -1067,3 +1067,97 @@ window.addEventListener('load', () => {
   // Also check immediately in case calendar is the default visible tab
   maybeLoadCalendar()
 }) // end load
+
+// ── Booking Modal ────────────────────────────────────────────
+;(function () {
+  const overlay  = document.getElementById('bookingOverlay')
+  const modal    = document.getElementById('bookingModal')
+  const openBtn  = document.getElementById('openBookingModal')
+  const closeBtn = document.getElementById('closeBookingModal')
+  const form     = document.getElementById('bookingForm')
+  const successEl= document.getElementById('bookingSuccess')
+  const errorEl  = document.getElementById('bookingError')
+  const submitBtn= document.getElementById('bkSubmitBtn')
+  const btnText  = document.getElementById('bkBtnText')
+  const btnSpinner=document.getElementById('bkBtnSpinner')
+
+  function openModal() {
+    overlay.classList.add('visible')
+    modal.classList.add('open')
+    document.body.style.overflow = 'hidden'
+    // Reset to form view each open
+    successEl.style.display = 'none'
+    form.style.display = ''
+    errorEl.style.display = 'none'
+  }
+
+  function closeModal() {
+    overlay.classList.remove('visible')
+    modal.classList.remove('open')
+    document.body.style.overflow = ''
+  }
+
+  if (openBtn)  openBtn.addEventListener('click', openModal)
+  if (closeBtn) closeBtn.addEventListener('click', closeModal)
+  if (overlay)  overlay.addEventListener('click', closeModal)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && modal.classList.contains('open')) closeModal()
+  })
+
+  // Success close button
+  const successClose = document.getElementById('bookingSuccessClose')
+  if (successClose) successClose.addEventListener('click', closeModal)
+
+  // Form submit — Web3Forms AJAX
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      errorEl.style.display = 'none'
+
+      // Basic validation
+      const required = form.querySelectorAll('[required]')
+      let valid = true
+      required.forEach(f => {
+        f.style.borderColor = ''
+        if (!f.value.trim()) {
+          f.style.borderColor = '#f07080'
+          valid = false
+        }
+      })
+      if (!valid) {
+        errorEl.textContent = 'Please fill in all required fields.'
+        errorEl.style.display = 'block'
+        return
+      }
+
+      // Loading state
+      submitBtn.disabled = true
+      btnText.style.display = 'none'
+      btnSpinner.style.display = ''
+
+      try {
+        const data = new FormData(form)
+        const res  = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: data,
+        })
+        const json = await res.json()
+
+        if (json.success) {
+          form.style.display = 'none'
+          successEl.style.display = 'block'
+          form.reset()
+        } else {
+          throw new Error(json.message || 'Submission failed')
+        }
+      } catch (err) {
+        errorEl.textContent = 'Something went wrong. Please try again or email djmaitresam@gmail.com'
+        errorEl.style.display = 'block'
+      } finally {
+        submitBtn.disabled = false
+        btnText.style.display = ''
+        btnSpinner.style.display = 'none'
+      }
+    })
+  }
+})()
