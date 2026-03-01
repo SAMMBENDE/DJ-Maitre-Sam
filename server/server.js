@@ -23,6 +23,7 @@ mongoose
 const imageSchema = new mongoose.Schema({
   url: { type: String, required: true, unique: true },
   name: { type: String, default: 'Gallery Photo' },
+  order: { type: Number, default: () => Date.now() },
   createdAt: { type: Date, default: Date.now },
 })
 const Image = mongoose.model('Image', imageSchema)
@@ -39,7 +40,7 @@ const Track = mongoose.model('Track', trackSchema)
 
 app.get('/images', async (req, res) => {
   try {
-    const images = await Image.find().sort({ createdAt: 1 })
+    const images = await Image.find().sort({ order: 1, createdAt: 1 })
     res.json(images)
   } catch (err) {
     res.status(500).json({ error: err.message })
@@ -70,6 +71,23 @@ app.delete('/images/:id', async (req, res) => {
   try {
     await Image.findByIdAndDelete(req.params.id)
     res.json({ message: 'Deleted' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// PATCH /images/:id — update order (for reordering)
+app.patch('/images/:id', async (req, res) => {
+  const { order, password } = req.body
+  if (password !== UPLOAD_PASSWORD)
+    return res.status(401).json({ error: 'Unauthorized' })
+  try {
+    const image = await Image.findByIdAndUpdate(
+      req.params.id,
+      { order },
+      { new: true },
+    )
+    res.json(image)
   } catch (err) {
     res.status(500).json({ error: err.message })
   }

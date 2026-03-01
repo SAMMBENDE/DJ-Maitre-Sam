@@ -1,549 +1,756 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DJ Maitre Sam — Admin</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DJ Maitre Sam — Admin</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0f0f0f;
-      color: #eee;
-      min-height: 100vh;
-    }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #0f0f0f;
+        color: #eee;
+        min-height: 100vh;
+      }
 
-    /* ── Login ── */
-    #loginScreen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      gap: 16px;
-    }
-    #loginScreen h1 { font-size: 1.6rem; color: #e74c3c; letter-spacing: 1px; }
-    #loginScreen p  { color: #888; font-size: 0.9rem; }
-    #loginScreen input {
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      background: #1a1a1a;
-      color: #fff;
-      font-size: 1rem;
-      width: 260px;
-      text-align: center;
-    }
-    #loginScreen button {
-      padding: 12px 32px;
-      background: #e74c3c;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    #loginError { color: #e74c3c; font-size: 0.85rem; display: none; }
+      /* ── Login ── */
+      #loginScreen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        gap: 16px;
+      }
+      #loginScreen h1 {
+        font-size: 1.6rem;
+        color: #e74c3c;
+        letter-spacing: 1px;
+      }
+      #loginScreen p {
+        color: #888;
+        font-size: 0.9rem;
+      }
+      #loginScreen input {
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        background: #1a1a1a;
+        color: #fff;
+        font-size: 1rem;
+        width: 260px;
+        text-align: center;
+      }
+      #loginScreen button {
+        padding: 12px 32px;
+        background: #e74c3c;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      #loginError {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        display: none;
+      }
 
-    /* ── App shell ── */
-    #app { display: none; }
+      /* ── App shell ── */
+      #app {
+        display: none;
+      }
 
-    header {
-      background: #1a1a1a;
-      border-bottom: 1px solid #2a2a2a;
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    header h1 { font-size: 1.1rem; color: #e74c3c; }
-    header span { font-size: 0.8rem; color: #666; }
-    #logoutBtn {
-      background: none;
-      border: 1px solid #444;
-      color: #aaa;
-      padding: 6px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
+      header {
+        background: #1a1a1a;
+        border-bottom: 1px solid #2a2a2a;
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      header h1 {
+        font-size: 1.1rem;
+        color: #e74c3c;
+      }
+      header span {
+        font-size: 0.8rem;
+        color: #666;
+      }
+      #logoutBtn {
+        background: none;
+        border: 1px solid #444;
+        color: #aaa;
+        padding: 6px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+      }
 
-    /* ── Tabs ── */
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid #2a2a2a;
-      background: #141414;
-    }
-    .tab-btn {
-      padding: 14px 28px;
-      background: none;
-      border: none;
-      color: #777;
-      font-size: 0.95rem;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
-    }
-    .tab-btn.active { color: #e74c3c; border-bottom-color: #e74c3c; }
+      /* ── Tabs ── */
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid #2a2a2a;
+        background: #141414;
+      }
+      .tab-btn {
+        padding: 14px 28px;
+        background: none;
+        border: none;
+        color: #777;
+        font-size: 0.95rem;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s;
+      }
+      .tab-btn.active {
+        color: #e74c3c;
+        border-bottom-color: #e74c3c;
+      }
 
-    /* ── Content ── */
-    .tab-content { display: none; padding: 28px 24px; max-width: 1100px; margin: 0 auto; }
-    .tab-content.active { display: block; }
+      /* ── Content ── */
+      .tab-content {
+        display: none;
+        padding: 28px 24px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .tab-content.active {
+        display: block;
+      }
 
-    /* ── Section header ── */
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .section-header h2 { font-size: 1.1rem; color: #ccc; }
-    .count-badge {
-      background: #2a2a2a;
-      color: #aaa;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      margin-left: 10px;
-    }
+      /* ── Section header ── */
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .section-header h2 {
+        font-size: 1.1rem;
+        color: #ccc;
+      }
+      .count-badge {
+        background: #2a2a2a;
+        color: #aaa;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-left: 10px;
+      }
 
-    /* ── Buttons ── */
-    .btn {
-      padding: 9px 18px;
-      border-radius: 7px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 600;
-      transition: opacity 0.2s;
-    }
-    .btn:hover { opacity: 0.85; }
-    .btn-primary { background: #e74c3c; color: #fff; }
-    .btn-secondary { background: #2a2a2a; color: #ccc; border: 1px solid #444; }
-    .btn-danger { background: #c0392b; color: #fff; font-size: 0.75rem; padding: 5px 10px; }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+      /* ── Buttons ── */
+      .btn {
+        padding: 9px 18px;
+        border-radius: 7px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 600;
+        transition: opacity 0.2s;
+      }
+      .btn:hover {
+        opacity: 0.85;
+      }
+      .btn-primary {
+        background: #e74c3c;
+        color: #fff;
+      }
+      .btn-secondary {
+        background: #2a2a2a;
+        color: #ccc;
+        border: 1px solid #444;
+      }
+      .btn-danger {
+        background: #c0392b;
+        color: #fff;
+        font-size: 0.75rem;
+        padding: 5px 10px;
+      }
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
 
-    /* ── Upload bar ── */
-    .upload-bar {
-      background: #1a1a1a;
-      border: 1px dashed #333;
-      border-radius: 10px;
-      padding: 18px 22px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-    .upload-bar span { color: #666; font-size: 0.85rem; flex: 1; }
+      /* ── Upload bar ── */
+      .upload-bar {
+        background: #1a1a1a;
+        border: 1px dashed #333;
+        border-radius: 10px;
+        padding: 18px 22px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .upload-bar span {
+        color: #666;
+        font-size: 0.85rem;
+        flex: 1;
+      }
 
-    /* ── Image grid ── */
-    .image-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 14px;
-    }
-    .image-card {
-      background: #1a1a1a;
-      border-radius: 8px;
-      overflow: hidden;
-      position: relative;
-      border: 1px solid #2a2a2a;
-    }
-    .image-card img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      display: block;
-    }
-    .image-card-footer {
-      padding: 8px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-    .image-card-footer span {
-      font-size: 0.72rem;
-      color: #777;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+      /* ── Image grid ── */
+      .image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 14px;
+      }
+      .image-card {
+        background: #1a1a1a;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid #2a2a2a;
+      }
+      .image-card img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        display: block;
+      }
+      .image-card-footer {
+        padding: 8px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .image-card-footer span {
+        font-size: 0.72rem;
+        color: #777;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-    /* ── Add track form ── */
-    .add-form {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      padding: 20px 22px;
-      margin-bottom: 28px;
-      display: grid;
-      grid-template-columns: 1fr 1fr auto auto;
-      gap: 12px;
-      align-items: end;
-    }
-    .add-form label { font-size: 0.75rem; color: #888; display: block; margin-bottom: 5px; }
-    .add-form input, .add-form select {
-      width: 100%;
-      padding: 9px 12px;
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 7px;
-      color: #eee;
-      font-size: 0.875rem;
-    }
-    .add-form input::placeholder { color: #555; }
+      /* ── Add track form ── */
+      .add-form {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        padding: 20px 22px;
+        margin-bottom: 28px;
+        display: grid;
+        grid-template-columns: 1fr 1fr auto auto;
+        gap: 12px;
+        align-items: end;
+      }
+      .add-form label {
+        font-size: 0.75rem;
+        color: #888;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .add-form input,
+      .add-form select {
+        width: 100%;
+        padding: 9px 12px;
+        background: #111;
+        border: 1px solid #333;
+        border-radius: 7px;
+        color: #eee;
+        font-size: 0.875rem;
+      }
+      .add-form input::placeholder {
+        color: #555;
+      }
 
-    /* ── Track list ── */
-    .category-section { margin-bottom: 28px; }
-    .category-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: #e74c3c;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .track-list { display: flex; flex-direction: column; gap: 8px; }
-    .track-item {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .track-icon { font-size: 1.1rem; }
-    .track-info { flex: 1; min-width: 0; }
-    .track-title { font-size: 0.9rem; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .track-url   { font-size: 0.72rem; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+      /* ── Track list ── */
+      .category-section {
+        margin-bottom: 28px;
+      }
+      .category-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #e74c3c;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .track-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .track-item {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .track-icon {
+        font-size: 1.1rem;
+      }
+      .track-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .track-title {
+        font-size: 0.9rem;
+        color: #ddd;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .track-url {
+        font-size: 0.72rem;
+        color: #555;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 2px;
+      }
 
-    /* ── Empty state ── */
-    .empty-state {
-      text-align: center;
-      padding: 40px;
-      color: #555;
-      font-size: 0.9rem;
-    }
+      /* ── Empty state ── */
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #555;
+        font-size: 0.9rem;
+      }
 
-    /* ── Toast ── */
-    #toast {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      background: #27ae60;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.875rem;
-      opacity: 0;
-      transition: opacity 0.3s;
-      z-index: 9999;
-      pointer-events: none;
-    }
-    #toast.error { background: #c0392b; }
-    #toast.show  { opacity: 1; }
+      /* ── Toast ── */
+      #toast {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        background: #27ae60;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 9999;
+        pointer-events: none;
+      }
+      #toast.error {
+        background: #c0392b;
+      }
+      #toast.show {
+        opacity: 1;
+      }
 
-    /* ── Loading spinner ── */
-    .spinner {
-      display: inline-block;
-      width: 18px; height: 18px;
-      border: 2px solid #333;
-      border-top-color: #e74c3c;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-      margin-right: 8px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+      /* ── Loading spinner ── */
+      .spinner {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 2px solid #333;
+        border-top-color: #e74c3c;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        vertical-align: middle;
+        margin-right: 8px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-    @media (max-width: 640px) {
-      .add-form { grid-template-columns: 1fr 1fr; }
-      .add-form .btn { grid-column: 1 / -1; }
-      .image-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-    }
-  </style>
-</head>
-<body>
-
-<!-- ── Login ── -->
-<div id="loginScreen">
-  <h1>🎧 DJ Maitre Sam</h1>
-  <p>Admin Dashboard — Enter password to continue</p>
-  <input type="password" id="pwdInput" placeholder="Password" />
-  <button onclick="login()">Enter</button>
-  <span id="loginError">Incorrect password</span>
-</div>
-
-<!-- ── App ── -->
-<div id="app">
-  <header>
-    <h1>🎧 DJ Maitre Sam — Admin</h1>
-    <div style="display:flex;align-items:center;gap:16px;">
-      <span id="apiStatus"></span>
-      <button id="logoutBtn" onclick="logout()">Logout</button>
+      @media (max-width: 640px) {
+        .add-form {
+          grid-template-columns: 1fr 1fr;
+        }
+        .add-form .btn {
+          grid-column: 1 / -1;
+        }
+        .image-grid {
+          grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── Login ── -->
+    <div id="loginScreen">
+      <h1>🎧 DJ Maitre Sam</h1>
+      <p>Admin Dashboard — Enter password to continue</p>
+      <input type="password" id="pwdInput" placeholder="Password" />
+      <button onclick="login()">Enter</button>
+      <span id="loginError">Incorrect password</span>
     </div>
-  </header>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('images')">🖼 Gallery</button>
-    <button class="tab-btn" onclick="switchTab('music')">🎵 Music</button>
-  </div>
+    <!-- ── App ── -->
+    <div id="app">
+      <header>
+        <h1>🎧 DJ Maitre Sam — Admin</h1>
+        <div style="display: flex; align-items: center; gap: 16px">
+          <span id="apiStatus"></span>
+          <button id="logoutBtn" onclick="logout()">Logout</button>
+        </div>
+      </header>
 
-  <!-- ── Images tab ── -->
-  <div id="tab-images" class="tab-content active">
-    <div class="section-header">
-      <div style="display:flex;align-items:center;">
-        <h2>Gallery Photos</h2>
-        <span class="count-badge" id="imageCount">—</span>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('images')">
+          🖼 Gallery
+        </button>
+        <button class="tab-btn" onclick="switchTab('music')">🎵 Music</button>
+      </div>
+
+      <!-- ── Images tab ── -->
+      <div id="tab-images" class="tab-content active">
+        <div class="section-header">
+          <div style="display: flex; align-items: center">
+            <h2>Gallery Photos</h2>
+            <span class="count-badge" id="imageCount">—</span>
+          </div>
+        </div>
+        <div class="upload-bar">
+          <span>Upload a new photo directly from your device</span>
+          <input
+            type="file"
+            id="imgFileInput"
+            accept="image/*"
+            style="display: none"
+          />
+          <button
+            class="btn btn-primary"
+            id="uploadImgBtn"
+            onclick="document.getElementById('imgFileInput').click()"
+          >
+            + Upload Photo
+          </button>
+        </div>
+        <div class="image-grid" id="imageGrid">
+          <div class="empty-state"><span class="spinner"></span> Loading…</div>
+        </div>
+      </div>
+
+      <!-- ── Music tab ── -->
+      <div id="tab-music" class="tab-content">
+        <div class="section-header">
+          <div style="display: flex; align-items: center">
+            <h2>Music Tracks</h2>
+            <span class="count-badge" id="trackCount">—</span>
+          </div>
+        </div>
+
+        <!-- Add track form -->
+        <div class="add-form" id="addTrackForm">
+          <div>
+            <label>Track Title</label>
+            <input
+              type="text"
+              id="trackTitle"
+              placeholder="e.g. DjSaM Afro Mix Vol.1"
+            />
+          </div>
+          <div>
+            <label>Cloudinary / Direct URL (.mp3)</label>
+            <input
+              type="url"
+              id="trackUrl"
+              placeholder="https://res.cloudinary.com/…"
+            />
+          </div>
+          <div>
+            <label>Category</label>
+            <select id="trackCategory">
+              <option value="afro">Mixtapes</option>
+              <option value="zouk">Variétés</option>
+              <option value="funk">Hits</option>
+            </select>
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button
+              class="btn btn-primary"
+              id="addTrackBtn"
+              onclick="addTrack()"
+            >
+              Add Track
+            </button>
+          </div>
+        </div>
+
+        <!-- Upload mp3 directly -->
+        <div class="upload-bar" style="margin-bottom: 28px">
+          <span
+            >Or upload an .mp3 file directly to Cloudinary — then the URL will
+            auto-fill above</span
+          >
+          <input
+            type="file"
+            id="mp3FileInput"
+            accept="audio/mpeg,.mp3"
+            style="display: none"
+          />
+          <button
+            class="btn btn-secondary"
+            id="uploadMp3Btn"
+            onclick="document.getElementById('mp3FileInput').click()"
+          >
+            ⬆ Upload MP3
+          </button>
+        </div>
+
+        <div id="trackListContainer">
+          <div class="empty-state"><span class="spinner"></span> Loading…</div>
+        </div>
       </div>
     </div>
-    <div class="upload-bar">
-      <span>Upload a new photo directly from your device</span>
-      <input type="file" id="imgFileInput" accept="image/*" style="display:none" />
-      <button class="btn btn-primary" id="uploadImgBtn" onclick="document.getElementById('imgFileInput').click()">+ Upload Photo</button>
-    </div>
-    <div class="image-grid" id="imageGrid">
-      <div class="empty-state"><span class="spinner"></span> Loading…</div>
-    </div>
-  </div>
 
-  <!-- ── Music tab ── -->
-  <div id="tab-music" class="tab-content">
-    <div class="section-header">
-      <div style="display:flex;align-items:center;">
-        <h2>Music Tracks</h2>
-        <span class="count-badge" id="trackCount">—</span>
-      </div>
-    </div>
+    <div id="toast"></div>
 
-    <!-- Add track form -->
-    <div class="add-form" id="addTrackForm">
-      <div>
-        <label>Track Title</label>
-        <input type="text" id="trackTitle" placeholder="e.g. DjSaM Afro Mix Vol.1" />
-      </div>
-      <div>
-        <label>Cloudinary / Direct URL (.mp3)</label>
-        <input type="url" id="trackUrl" placeholder="https://res.cloudinary.com/…" />
-      </div>
-      <div>
-        <label>Category</label>
-        <select id="trackCategory">
-          <option value="afro">Mixtapes</option>
-          <option value="zouk">Variétés</option>
-          <option value="funk">Hits</option>
-        </select>
-      </div>
-      <div>
-        <label>&nbsp;</label>
-        <button class="btn btn-primary" id="addTrackBtn" onclick="addTrack()">Add Track</button>
-      </div>
-    </div>
+    <script>
+      const API = 'https://dj-maitre-sam.onrender.com'
+      const PASSWORD = 'djsam123'
+      const CLOUD_NAME = 'dkd3k6eau'
+      const UPLOAD_PRESET = 'dj-maitre-sam'
 
-    <!-- Upload mp3 directly -->
-    <div class="upload-bar" style="margin-bottom:28px;">
-      <span>Or upload an .mp3 file directly to Cloudinary — then the URL will auto-fill above</span>
-      <input type="file" id="mp3FileInput" accept="audio/mpeg,.mp3" style="display:none" />
-      <button class="btn btn-secondary" id="uploadMp3Btn" onclick="document.getElementById('mp3FileInput').click()">⬆ Upload MP3</button>
-    </div>
+      const CATEGORY_LABELS = {
+        afro: 'Mixtapes',
+        zouk: 'Variétés',
+        funk: 'Hits',
+      }
 
-    <div id="trackListContainer">
-      <div class="empty-state"><span class="spinner"></span> Loading…</div>
-    </div>
-  </div>
-</div>
+      // ── Auth ──────────────────────────────────────────────────
+      function login() {
+        const val = document.getElementById('pwdInput').value
+        if (val === PASSWORD) {
+          sessionStorage.setItem('adminAuth', '1')
+          document.getElementById('loginScreen').style.display = 'none'
+          document.getElementById('app').style.display = 'block'
+          init()
+        } else {
+          document.getElementById('loginError').style.display = 'block'
+        }
+      }
 
-<div id="toast"></div>
+      function logout() {
+        sessionStorage.removeItem('adminAuth')
+        location.reload()
+      }
 
-<script>
-  const API = 'https://dj-maitre-sam.onrender.com'
-  const PASSWORD = 'djsam123'
-  const CLOUD_NAME = 'dkd3k6eau'
-  const UPLOAD_PRESET = 'dj-maitre-sam'
+      document.getElementById('pwdInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') login()
+      })
 
-  const CATEGORY_LABELS = { afro: 'Mixtapes', zouk: 'Variétés', funk: 'Hits' }
+      if (sessionStorage.getItem('adminAuth')) {
+        document.getElementById('loginScreen').style.display = 'none'
+        document.getElementById('app').style.display = 'block'
+        init()
+      }
 
-  // ── Auth ──────────────────────────────────────────────────
-  function login() {
-    const val = document.getElementById('pwdInput').value
-    if (val === PASSWORD) {
-      sessionStorage.setItem('adminAuth', '1')
-      document.getElementById('loginScreen').style.display = 'none'
-      document.getElementById('app').style.display = 'block'
-      init()
-    } else {
-      document.getElementById('loginError').style.display = 'block'
-    }
-  }
+      // ── Tabs ─────────────────────────────────────────────────
+      function switchTab(name) {
+        document.querySelectorAll('.tab-btn').forEach((b, i) => {
+          b.classList.toggle('active', ['images', 'music'][i] === name)
+        })
+        document.querySelectorAll('.tab-content').forEach((el) => {
+          el.classList.toggle('active', el.id === 'tab-' + name)
+        })
+      }
 
-  function logout() {
-    sessionStorage.removeItem('adminAuth')
-    location.reload()
-  }
+      // ── Toast ─────────────────────────────────────────────────
+      function toast(msg, isError = false) {
+        const t = document.getElementById('toast')
+        t.textContent = msg
+        t.className = 'show' + (isError ? ' error' : '')
+        clearTimeout(t._timer)
+        t._timer = setTimeout(() => t.classList.remove('show'), 3000)
+      }
 
-  document.getElementById('pwdInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') login()
-  })
+      // ── Init ─────────────────────────────────────────────────
+      function init() {
+        loadImages()
+        loadTracks()
+        document.getElementById('apiStatus').textContent = API
+        document.getElementById('apiStatus').style.cssText =
+          'font-size:0.7rem;color:#555;'
+      }
 
-  if (sessionStorage.getItem('adminAuth')) {
-    document.getElementById('loginScreen').style.display = 'none'
-    document.getElementById('app').style.display = 'block'
-    init()
-  }
+      // ── Images ───────────────────────────────────────────────
+      let allImages = []
 
-  // ── Tabs ─────────────────────────────────────────────────
-  function switchTab(name) {
-    document.querySelectorAll('.tab-btn').forEach((b, i) => {
-      b.classList.toggle('active', ['images','music'][i] === name)
-    })
-    document.querySelectorAll('.tab-content').forEach(el => {
-      el.classList.toggle('active', el.id === 'tab-' + name)
-    })
-  }
+      async function loadImages() {
+        try {
+          const res = await fetch(API + '/images')
+          allImages = await res.json()
+          document.getElementById('imageCount').textContent = allImages.length
+          renderImages(allImages)
+        } catch {
+          document.getElementById('imageGrid').innerHTML =
+            '<div class="empty-state">Failed to load images.</div>'
+        }
+      }
 
-  // ── Toast ─────────────────────────────────────────────────
-  function toast(msg, isError = false) {
-    const t = document.getElementById('toast')
-    t.textContent = msg
-    t.className = 'show' + (isError ? ' error' : '')
-    clearTimeout(t._timer)
-    t._timer = setTimeout(() => t.classList.remove('show'), 3000)
-  }
-
-  // ── Init ─────────────────────────────────────────────────
-  function init() {
-    loadImages()
-    loadTracks()
-    document.getElementById('apiStatus').textContent = API
-    document.getElementById('apiStatus').style.cssText = 'font-size:0.7rem;color:#555;'
-  }
-
-  // ── Images ───────────────────────────────────────────────
-  async function loadImages() {
-    try {
-      const res = await fetch(API + '/images')
-      const images = await res.json()
-      document.getElementById('imageCount').textContent = images.length
-      renderImages(images)
-    } catch {
-      document.getElementById('imageGrid').innerHTML = '<div class="empty-state">Failed to load images.</div>'
-    }
-  }
-
-  function renderImages(images) {
-    const grid = document.getElementById('imageGrid')
-    if (!images.length) {
-      grid.innerHTML = '<div class="empty-state">No photos yet.</div>'
-      return
-    }
-    grid.innerHTML = images.map(img => `
+      function renderImages(images) {
+        const grid = document.getElementById('imageGrid')
+        if (!images.length) {
+          grid.innerHTML = '<div class="empty-state">No photos yet.</div>'
+          return
+        }
+        grid.innerHTML = images
+          .map(
+            (img, i) => `
       <div class="image-card" id="img-${img._id}">
         <img src="${img.url}" alt="${img.name}" loading="lazy" />
         <div class="image-card-footer">
           <span>${img.name}</span>
-          <button class="btn btn-danger" onclick="deleteImage('${img._id}')">✕</button>
+          <div style="display:flex;gap:4px;flex-shrink:0;">
+            <button class="btn" style="padding:4px 7px;background:#2a2a2a;color:#aaa;font-size:0.8rem;" onclick="moveImage(${i}, -1)" ${i === 0 ? 'disabled' : ''}>↑</button>
+            <button class="btn" style="padding:4px 7px;background:#2a2a2a;color:#aaa;font-size:0.8rem;" onclick="moveImage(${i}, 1)" ${i === images.length - 1 ? 'disabled' : ''}>↓</button>
+            <button class="btn btn-danger" onclick="deleteImage('${img._id}')">✕</button>
+          </div>
         </div>
       </div>
-    `).join('')
-  }
+    `,
+          )
+          .join('')
+      }
 
-  async function deleteImage(id) {
-    if (!confirm('Delete this photo?')) return
-    try {
-      const res = await fetch(`${API}/images/${id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: PASSWORD }),
-      })
-      if (!res.ok) throw new Error()
-      document.getElementById('img-' + id)?.remove()
-      const count = document.querySelectorAll('.image-card').length
-      document.getElementById('imageCount').textContent = count
-      toast('Photo deleted')
-    } catch { toast('Delete failed', true) }
-  }
+      async function moveImage(index, direction) {
+        const swapIndex = index + direction
+        if (swapIndex < 0 || swapIndex >= allImages.length) return
 
-  // Image upload via Cloudinary
-  document.getElementById('imgFileInput').addEventListener('change', async function () {
-    const file = this.files[0]
-    if (!file) return
-    this.value = ''
-    const btn = document.getElementById('uploadImgBtn')
-    btn.disabled = true
-    btn.innerHTML = '<span class="spinner"></span>Uploading…'
-    try {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('upload_preset', UPLOAD_PRESET)
-      const r = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: fd })
-      if (!r.ok) throw new Error('Cloudinary error')
-      const data = await r.json()
-      const count = document.querySelectorAll('.image-card').length
-      const name = 'DJ Gallery ' + (count + 1)
-      const res = await fetch(API + '/images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: data.secure_url, name, password: PASSWORD }),
-      })
-      if (!res.ok) throw new Error('Save failed')
-      const img = await res.json()
-      // Prepend to grid
-      const grid = document.getElementById('imageGrid')
-      const card = document.createElement('div')
-      card.className = 'image-card'
-      card.id = 'img-' + img._id
-      card.innerHTML = `
-        <img src="${img.url}" alt="${img.name}" loading="lazy" />
-        <div class="image-card-footer">
-          <span>${img.name}</span>
-          <button class="btn btn-danger" onclick="deleteImage('${img._id}')">✕</button>
-        </div>`
-      grid.appendChild(card)
-      document.getElementById('imageCount').textContent = document.querySelectorAll('.image-card').length
-      toast('Photo uploaded!')
-    } catch (e) { toast(e.message || 'Upload failed', true) }
-    finally {
-      btn.disabled = false
-      btn.textContent = '+ Upload Photo'
-    }
-  })
+        const imgA = allImages[index]
+        const imgB = allImages[swapIndex]
 
-  // ── Tracks ───────────────────────────────────────────────
-  async function loadTracks() {
-    try {
-      const res = await fetch(API + '/tracks')
-      const tracks = await res.json()
-      document.getElementById('trackCount').textContent = tracks.length
-      renderTracks(tracks)
-    } catch {
-      document.getElementById('trackListContainer').innerHTML = '<div class="empty-state">Failed to load tracks.</div>'
-    }
-  }
+        // Swap order values
+        const orderA = imgA.order ?? index
+        const orderB = imgB.order ?? swapIndex
 
-  function renderTracks(tracks) {
-    const container = document.getElementById('trackListContainer')
-    if (!tracks.length) {
-      container.innerHTML = '<div class="empty-state">No tracks yet. Add one above.</div>'
-      return
-    }
-    const grouped = { afro: [], zouk: [], funk: [] }
-    tracks.forEach(t => { if (grouped[t.category]) grouped[t.category].push(t) })
-    container.innerHTML = Object.entries(grouped)
-      .filter(([, arr]) => arr.length)
-      .map(([cat, arr]) => `
+        try {
+          await Promise.all([
+            fetch(`${API}/images/${imgA._id}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ order: orderB, password: PASSWORD }),
+            }),
+            fetch(`${API}/images/${imgB._id}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ order: orderA, password: PASSWORD }),
+            }),
+          ])
+          // Swap in local array and re-render
+          ;[allImages[index], allImages[swapIndex]] = [
+            allImages[swapIndex],
+            allImages[index],
+          ]
+          renderImages(allImages)
+          toast('Order saved')
+        } catch {
+          toast('Reorder failed', true)
+        }
+      }
+
+      async function deleteImage(id) {
+        if (!confirm('Delete this photo?')) return
+        try {
+          const res = await fetch(`${API}/images/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: PASSWORD }),
+          })
+          if (!res.ok) throw new Error()
+          allImages = allImages.filter((img) => img._id !== id)
+          document.getElementById('imageCount').textContent = allImages.length
+          renderImages(allImages)
+          toast('Photo deleted')
+        } catch {
+          toast('Delete failed', true)
+        }
+      }
+
+      // Image upload via Cloudinary
+      document
+        .getElementById('imgFileInput')
+        .addEventListener('change', async function () {
+          const file = this.files[0]
+          if (!file) return
+          this.value = ''
+          const btn = document.getElementById('uploadImgBtn')
+          btn.disabled = true
+          btn.innerHTML = '<span class="spinner"></span>Uploading…'
+          try {
+            const fd = new FormData()
+            fd.append('file', file)
+            fd.append('upload_preset', UPLOAD_PRESET)
+            const r = await fetch(
+              `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+              { method: 'POST', body: fd },
+            )
+            if (!r.ok) throw new Error('Cloudinary error')
+            const data = await r.json()
+            const count = document.querySelectorAll('.image-card').length
+            const name = 'DJ Gallery ' + (count + 1)
+            const res = await fetch(API + '/images', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                url: data.secure_url,
+                name,
+                password: PASSWORD,
+              }),
+            })
+            if (!res.ok) throw new Error('Save failed')
+            const img = await res.json()
+            allImages.push(img)
+            document.getElementById('imageCount').textContent = allImages.length
+            renderImages(allImages)
+            toast('Photo uploaded!')
+          } catch (e) {
+            toast(e.message || 'Upload failed', true)
+          } finally {
+            btn.disabled = false
+            btn.textContent = '+ Upload Photo'
+          }
+        })
+
+      // ── Tracks ───────────────────────────────────────────────
+      async function loadTracks() {
+        try {
+          const res = await fetch(API + '/tracks')
+          const tracks = await res.json()
+          document.getElementById('trackCount').textContent = tracks.length
+          renderTracks(tracks)
+        } catch {
+          document.getElementById('trackListContainer').innerHTML =
+            '<div class="empty-state">Failed to load tracks.</div>'
+        }
+      }
+
+      function renderTracks(tracks) {
+        const container = document.getElementById('trackListContainer')
+        if (!tracks.length) {
+          container.innerHTML =
+            '<div class="empty-state">No tracks yet. Add one above.</div>'
+          return
+        }
+        const grouped = { afro: [], zouk: [], funk: [] }
+        tracks.forEach((t) => {
+          if (grouped[t.category]) grouped[t.category].push(t)
+        })
+        container.innerHTML = Object.entries(grouped)
+          .filter(([, arr]) => arr.length)
+          .map(
+            ([cat, arr]) => `
         <div class="category-section">
           <div class="category-label">🎵 ${CATEGORY_LABELS[cat]} <span class="count-badge">${arr.length}</span></div>
           <div class="track-list">
-            ${arr.map(t => `
+            ${arr
+              .map(
+                (t) => `
               <div class="track-item" id="track-${t._id}">
                 <span class="track-icon">🎧</span>
                 <div class="track-info">
@@ -551,73 +758,98 @@
                   <div class="track-url">${t.url}</div>
                 </div>
                 <button class="btn btn-danger" onclick="deleteTrack('${t._id}')">✕ Delete</button>
-              </div>`).join('')}
+              </div>`,
+              )
+              .join('')}
           </div>
-        </div>`).join('')
-  }
-
-  async function addTrack() {
-    const title = document.getElementById('trackTitle').value.trim()
-    const url = document.getElementById('trackUrl').value.trim()
-    const category = document.getElementById('trackCategory').value
-    if (!title || !url) { toast('Title and URL are required', true); return }
-    const btn = document.getElementById('addTrackBtn')
-    btn.disabled = true
-    btn.textContent = 'Saving…'
-    try {
-      const res = await fetch(API + '/tracks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, url, category, password: PASSWORD }),
-      })
-      if (!res.ok) throw new Error()
-      document.getElementById('trackTitle').value = ''
-      document.getElementById('trackUrl').value = ''
-      await loadTracks()
-      toast('Track added!')
-    } catch { toast('Failed to add track', true) }
-    finally { btn.disabled = false; btn.textContent = 'Add Track' }
-  }
-
-  async function deleteTrack(id) {
-    if (!confirm('Delete this track?')) return
-    try {
-      const res = await fetch(`${API}/tracks/${id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: PASSWORD }),
-      })
-      if (!res.ok) throw new Error()
-      document.getElementById('track-' + id)?.remove()
-      const count = document.querySelectorAll('.track-item').length
-      document.getElementById('trackCount').textContent = count
-      toast('Track deleted')
-    } catch { toast('Delete failed', true) }
-  }
-
-  // MP3 upload via Cloudinary — fills URL field
-  document.getElementById('mp3FileInput').addEventListener('change', async function () {
-    const file = this.files[0]
-    if (!file) return
-    this.value = ''
-    const btn = document.getElementById('uploadMp3Btn')
-    btn.disabled = true
-    btn.innerHTML = '<span class="spinner"></span>Uploading…'
-    try {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('upload_preset', UPLOAD_PRESET)
-      const r = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, { method: 'POST', body: fd })
-      if (!r.ok) throw new Error('Cloudinary error')
-      const data = await r.json()
-      document.getElementById('trackUrl').value = data.secure_url
-      if (!document.getElementById('trackTitle').value) {
-        document.getElementById('trackTitle').value = file.name.replace(/\.mp3$/i, '')
+        </div>`,
+          )
+          .join('')
       }
-      toast('MP3 uploaded — review and click Add Track')
-    } catch (e) { toast(e.message || 'Upload failed', true) }
-    finally { btn.disabled = false; btn.innerHTML = '⬆ Upload MP3' }
-  })
-</script>
-</body>
+
+      async function addTrack() {
+        const title = document.getElementById('trackTitle').value.trim()
+        const url = document.getElementById('trackUrl').value.trim()
+        const category = document.getElementById('trackCategory').value
+        if (!title || !url) {
+          toast('Title and URL are required', true)
+          return
+        }
+        const btn = document.getElementById('addTrackBtn')
+        btn.disabled = true
+        btn.textContent = 'Saving…'
+        try {
+          const res = await fetch(API + '/tracks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, url, category, password: PASSWORD }),
+          })
+          if (!res.ok) throw new Error()
+          document.getElementById('trackTitle').value = ''
+          document.getElementById('trackUrl').value = ''
+          await loadTracks()
+          toast('Track added!')
+        } catch {
+          toast('Failed to add track', true)
+        } finally {
+          btn.disabled = false
+          btn.textContent = 'Add Track'
+        }
+      }
+
+      async function deleteTrack(id) {
+        if (!confirm('Delete this track?')) return
+        try {
+          const res = await fetch(`${API}/tracks/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: PASSWORD }),
+          })
+          if (!res.ok) throw new Error()
+          document.getElementById('track-' + id)?.remove()
+          const count = document.querySelectorAll('.track-item').length
+          document.getElementById('trackCount').textContent = count
+          toast('Track deleted')
+        } catch {
+          toast('Delete failed', true)
+        }
+      }
+
+      // MP3 upload via Cloudinary — fills URL field
+      document
+        .getElementById('mp3FileInput')
+        .addEventListener('change', async function () {
+          const file = this.files[0]
+          if (!file) return
+          this.value = ''
+          const btn = document.getElementById('uploadMp3Btn')
+          btn.disabled = true
+          btn.innerHTML = '<span class="spinner"></span>Uploading…'
+          try {
+            const fd = new FormData()
+            fd.append('file', file)
+            fd.append('upload_preset', UPLOAD_PRESET)
+            const r = await fetch(
+              `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,
+              { method: 'POST', body: fd },
+            )
+            if (!r.ok) throw new Error('Cloudinary error')
+            const data = await r.json()
+            document.getElementById('trackUrl').value = data.secure_url
+            if (!document.getElementById('trackTitle').value) {
+              document.getElementById('trackTitle').value = file.name.replace(
+                /\.mp3$/i,
+                '',
+              )
+            }
+            toast('MP3 uploaded — review and click Add Track')
+          } catch (e) {
+            toast(e.message || 'Upload failed', true)
+          } finally {
+            btn.disabled = false
+            btn.innerHTML = '⬆ Upload MP3'
+          }
+        })
+    </script>
+  </body>
 </html>

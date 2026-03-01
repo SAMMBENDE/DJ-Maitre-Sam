@@ -604,9 +604,55 @@ if (uploadGalleryBtn && galleryUploadInput) {
   })
 }
 
+// ── Load tracks from API ─────────────────────────────────────
+async function loadTracksFromAPI() {
+  try {
+    const res = await fetch(GALLERY_API_URL + '/tracks')
+    if (!res.ok) throw new Error('API error')
+    const tracks = await res.json()
+    if (!tracks.length) return
+
+    const categories = ['afro', 'zouk', 'funk']
+    categories.forEach((cat) => {
+      const ul = document.getElementById('playlist-' + cat)
+      if (!ul) return
+      ul.innerHTML = ''
+      const catTracks = tracks.filter((t) => t.category === cat)
+      catTracks.forEach((track) => {
+        const li = document.createElement('li')
+        li.dataset.src = track.url
+        li.innerHTML = `${track.title}
+          <a href="${track.url}" download class="download-btn" title="Télécharger">
+            <i class="fa fa-download"></i>
+          </a>`
+        li.addEventListener('click', function () {
+          document
+            .querySelectorAll('.category-list li')
+            .forEach((el) => el.classList.remove('active'))
+          this.classList.add('active')
+          audioPlayer.src = this.dataset.src
+          audioPlayer.play()
+        })
+        ul.appendChild(li)
+      })
+      // Auto-select first track of visible playlist
+      if (ul.style.display !== 'none') {
+        const first = ul.querySelector('li')
+        if (first) {
+          first.classList.add('active')
+          audioPlayer.src = first.dataset.src
+        }
+      }
+    })
+  } catch (err) {
+    console.warn('Could not load tracks from API:', err.message)
+  }
+}
+
 // ── Load gallery on page ready ───────────────────────────────
 window.addEventListener('load', () => {
   loadGalleryFromAPI()
+  loadTracksFromAPI()
   // Re-show upload button if already authenticated this session
   if (sessionStorage.getItem('uploadAuth')) {
     revealUploadButton()
