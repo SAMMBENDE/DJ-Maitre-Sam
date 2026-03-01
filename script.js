@@ -5,11 +5,17 @@ const GALLERY_API_URL = '' // e.g. 'https://djsam-gallery-api.onrender.com'
 
 // Password for gallery uploads
 const UPLOAD_PASSWORD = 'djsam123'
+function revealUploadButton() {
+  const row = document.getElementById('galleryUploadRow')
+  if (row) row.style.display = 'block'
+}
+
 function checkUploadAuth() {
   if (!sessionStorage.getItem('uploadAuth')) {
     const pwd = prompt('Enter password to upload:')
     if (pwd === UPLOAD_PASSWORD) {
       sessionStorage.setItem('uploadAuth', '1')
+      revealUploadButton()
       return true
     }
     return false
@@ -535,6 +541,26 @@ function showSuccessMessage(message) {
 const uploadGalleryBtn = document.getElementById('uploadGalleryBtn')
 const galleryUploadInput = document.getElementById('galleryUploadInput')
 
+// Secret trigger: triple-click the Gallery tab button to reveal upload
+;(function () {
+  const galleryTabBtn = document.querySelector('[data-tab="gallery"]')
+  if (!galleryTabBtn) return
+  let clickCount = 0
+  let clickTimer = null
+  galleryTabBtn.addEventListener('click', () => {
+    clickCount++
+    clearTimeout(clickTimer)
+    clickTimer = setTimeout(() => {
+      clickCount = 0
+    }, 600)
+    if (clickCount >= 3) {
+      clickCount = 0
+      if (!sessionStorage.getItem('uploadAuth')) checkUploadAuth()
+      else revealUploadButton()
+    }
+  })
+})()
+
 if (uploadGalleryBtn && galleryUploadInput) {
   uploadGalleryBtn.addEventListener('click', () => {
     if (!checkUploadAuth()) return
@@ -579,4 +605,10 @@ if (uploadGalleryBtn && galleryUploadInput) {
 }
 
 // ── Load gallery on page ready ───────────────────────────────
-window.addEventListener('load', loadGalleryFromAPI)
+window.addEventListener('load', () => {
+  loadGalleryFromAPI()
+  // Re-show upload button if already authenticated this session
+  if (sessionStorage.getItem('uploadAuth')) {
+    revealUploadButton()
+  }
+})
