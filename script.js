@@ -1,7 +1,7 @@
 // ── Gallery API ──────────────────────────────────────────────
 // Update GALLERY_API_URL once your Render service is live.
 // Leave as empty string to fall back to the embedded static slides.
-const GALLERY_API_URL = '' // e.g. 'https://djsam-gallery-api.onrender.com'
+const GALLERY_API_URL = 'https://dj-maitre-sam.onrender.com'
 
 // Password for gallery uploads
 const UPLOAD_PASSWORD = 'djsam123'
