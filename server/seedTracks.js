@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const trackSchema = new mongoose.Schema({
   title: { type: String, required: true },
   url: { type: String, required: true, unique: true },
-  category: { type: String, enum: ['afro', 'zouk'], default: 'afro' },
+  category: { type: String, enum: ['afro', 'funk', 'zouk'], default: 'afro' },
   createdAt: { type: Date, default: Date.now },
 })
 const Track = mongoose.model('Track', trackSchema)

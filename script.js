@@ -654,13 +654,11 @@ async function loadTracksFromAPI() {
     const tracks = await res.json()
     if (!tracks.length) return
 
-    const categories = ['afro']
-    categories.forEach((cat) => {
-      const ul = document.getElementById('playlist-' + cat)
-      if (!ul) return
-      ul.innerHTML = ''
-      const catTracks = tracks.filter((t) => t.category === cat)
-      catTracks.forEach((track) => {
+    const ul = document.getElementById('playlist-afro')
+    if (!ul) return
+    ul.innerHTML = ''
+    // Show all categories (afro, funk, zouk) in the single Mixtapes list
+    tracks.forEach((track) => {
         const li = document.createElement('li')
         li.dataset.src = track.url
         li.innerHTML = `${track.title}
@@ -676,16 +674,13 @@ async function loadTracksFromAPI() {
           audioPlayer.play()
         })
         ul.appendChild(li)
-      })
-      // Auto-select first track of visible playlist
-      if (ul.style.display !== 'none') {
-        const first = ul.querySelector('li')
-        if (first) {
-          first.classList.add('active')
-          audioPlayer.src = first.dataset.src
-        }
-      }
     })
+    // Auto-select first track
+    const first = ul.querySelector('li')
+    if (first) {
+      first.classList.add('active')
+      audioPlayer.src = first.dataset.src
+    }
   } catch (err) {
     console.warn('Could not load tracks from API:', err.message)
   }
@@ -1070,16 +1065,16 @@ window.addEventListener('load', () => {
 
 // ── Booking Modal ────────────────────────────────────────────
 ;(function () {
-  const overlay  = document.getElementById('bookingOverlay')
-  const modal    = document.getElementById('bookingModal')
-  const openBtn  = document.getElementById('openBookingModal')
+  const overlay = document.getElementById('bookingOverlay')
+  const modal = document.getElementById('bookingModal')
+  const openBtn = document.getElementById('openBookingModal')
   const closeBtn = document.getElementById('closeBookingModal')
-  const form     = document.getElementById('bookingForm')
-  const successEl= document.getElementById('bookingSuccess')
-  const errorEl  = document.getElementById('bookingError')
-  const submitBtn= document.getElementById('bkSubmitBtn')
-  const btnText  = document.getElementById('bkBtnText')
-  const btnSpinner=document.getElementById('bkBtnSpinner')
+  const form = document.getElementById('bookingForm')
+  const successEl = document.getElementById('bookingSuccess')
+  const errorEl = document.getElementById('bookingError')
+  const submitBtn = document.getElementById('bkSubmitBtn')
+  const btnText = document.getElementById('bkBtnText')
+  const btnSpinner = document.getElementById('bkBtnSpinner')
 
   function openModal() {
     overlay.classList.add('visible')
@@ -1097,11 +1092,12 @@ window.addEventListener('load', () => {
     document.body.style.overflow = ''
   }
 
-  if (openBtn)  openBtn.addEventListener('click', openModal)
+  if (openBtn) openBtn.addEventListener('click', openModal)
   if (closeBtn) closeBtn.addEventListener('click', closeModal)
-  if (overlay)  overlay.addEventListener('click', closeModal)
+  if (overlay) overlay.addEventListener('click', closeModal)
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal && modal.classList.contains('open')) closeModal()
+    if (e.key === 'Escape' && modal && modal.classList.contains('open'))
+      closeModal()
   })
 
   // Success close button
@@ -1117,7 +1113,7 @@ window.addEventListener('load', () => {
       // Basic validation
       const required = form.querySelectorAll('[required]')
       let valid = true
-      required.forEach(f => {
+      required.forEach((f) => {
         f.style.borderColor = ''
         if (!f.value.trim()) {
           f.style.borderColor = '#f07080'
@@ -1137,7 +1133,7 @@ window.addEventListener('load', () => {
 
       try {
         const data = new FormData(form)
-        const res  = await fetch('https://api.web3forms.com/submit', {
+        const res = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           body: data,
         })
@@ -1151,7 +1147,8 @@ window.addEventListener('load', () => {
           throw new Error(json.message || 'Submission failed')
         }
       } catch (err) {
-        errorEl.textContent = 'Something went wrong. Please try again or email djmaitresam@gmail.com'
+        errorEl.textContent =
+          'Something went wrong. Please try again or email djmaitresam@gmail.com'
         errorEl.style.display = 'block'
       } finally {
         submitBtn.disabled = false
