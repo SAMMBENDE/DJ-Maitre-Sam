@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -97,7 +97,15 @@
         aria-label="Open Audio Settings"
       >
         <i class="fa fa-sliders-h"></i>
-        <span class="gear-label">Audio Settings</span>
+        <span class="gear-label" data-i18n="audioSettings">Audio Settings</span>
+      </button>
+      <button
+        class="lang-toggle-btn"
+        id="langToggle"
+        aria-label="Toggle language"
+        onclick="toggleLanguage()"
+      >
+        <span id="langLabel">FR</span>
       </button>
     </header>
 
@@ -114,7 +122,8 @@
       </div>
 
       <p class="press-play-hint">
-        <i class="fa fa-headphones"></i> Press Play to Start the Experience
+        <i class="fa fa-headphones"></i>
+        <span data-i18n="pressPlay">Press Play to Start the Experience</span>
       </p>
 
       <div class="custom-player-controls">
@@ -148,7 +157,9 @@
         <div class="equalizer" title="Equalizer" aria-hidden="true">
           <span></span><span></span><span></span><span></span><span></span>
         </div>
-        <span id="currentTrackName">Select a track to begin...</span>
+        <span id="currentTrackName" data-i18n="selectTrack"
+          >Select a track to begin...</span
+        >
       </div>
 
       <!-- Hidden audio element — controlled by custom buttons -->
@@ -163,18 +174,27 @@
         aria-expanded="false"
         aria-controls="bioBody"
       >
-        <span>About DjSaM & Music Genres</span>
+        <span data-i18n="aboutBio">About DjSam</span>
         <i class="fa fa-chevron-down bio-chevron"></i>
       </button>
       <div class="bio-body" id="bioBody">
         <div class="bio-divider"></div>
-        <p class="bio-text">
+        <p class="bio-text" data-i18n="bioText">
           DJ Maitre Sam is a high-energy, multi-genre DJ blending Afro beats and
           global hits into seamless, cinematic sets that deliver an
           unforgettable experience. With over a decade behind the decks, his
           mastery of sound and crowd psychology has positioned him among the
           most dynamic DJs of his generation.
         </p>
+        <section class="events-section">
+          <h4 class="events-title" data-i18n="eventsTitle">
+            Events &amp; Experiences
+          </h4>
+          <p class="events-list" data-i18n="eventsList">
+            Corporate Events | Weddings | Birthday Parties | VIP Events |
+            Festivals | Private Parties | Fashion Shows | Gala Dinners
+          </p>
+        </section>
         <section class="genres-section">
           <p>
             Afro Beats • Amapiano • Makossa • Ndombolo • Coupé Décalé • Hiphop •
@@ -189,9 +209,19 @@
     <section class="music-section">
       <div class="audio-box">
         <div class="playlist-tabs">
-          <button class="tab-btn active" data-tab="afro">Mixtapes</button>
-          <button class="tab-btn" data-tab="calendar">Calendar</button>
-          <button class="tab-btn" data-tab="gallery">Gallery</button>
+          <button
+            class="tab-btn active"
+            data-tab="afro"
+            data-i18n="tabMixtapes"
+          >
+            Mixtapes
+          </button>
+          <button class="tab-btn" data-tab="calendar" data-i18n="tabCalendar">
+            Calendar
+          </button>
+          <button class="tab-btn" data-tab="gallery" data-i18n="tabGallery">
+            Gallery
+          </button>
         </div>
 
         <ul
@@ -199,7 +229,9 @@
           class="playlist category-list"
           style="display: none"
         >
-          <li class="playlist-loading">Loading tracks…</li>
+          <li class="playlist-loading" data-i18n="loadingTracks">
+            Loading tracks…
+          </li>
         </ul>
         <!-- ── CALENDAR TAB ──────────────────────────────── -->
         <div
@@ -224,8 +256,13 @@
 
           <!-- Day Names -->
           <div class="cal-day-names">
-            <span>Sun</span><span>Mon</span><span>Tue</span> <span>Wed</span
-            ><span>Thu</span><span>Fri</span><span>Sat</span>
+            <span data-i18n="calSun">Sun</span
+            ><span data-i18n="calMon">Mon</span
+            ><span data-i18n="calTue">Tue</span>
+            <span data-i18n="calWed">Wed</span
+            ><span data-i18n="calThu">Thu</span
+            ><span data-i18n="calFri">Fri</span
+            ><span data-i18n="calSat">Sat</span>
           </div>
 
           <!-- Date Grid (built by JS) -->
@@ -234,34 +271,43 @@
           <!-- Legend -->
           <div class="cal-legend">
             <span class="leg-item"
-              ><span class="leg-dot available"></span>Available</span
+              ><span class="leg-dot available"></span
+              ><span data-i18n="calAvailable">Available</span></span
             >
             <span class="leg-item"
-              ><span class="leg-dot booked"></span>Booked</span
+              ><span class="leg-dot booked"></span
+              ><span data-i18n="calBooked">Booked</span></span
             >
             <span class="leg-item"
-              ><span class="leg-dot unavailable"></span>Unavailable</span
+              ><span class="leg-dot unavailable"></span
+              ><span data-i18n="calUnavailable">Unavailable</span></span
             >
           </div>
 
           <!-- Status picker (shown only when admin unlocked via triple-click on Calendar tab) -->
           <div class="cal-status-picker" id="calStatusPicker">
-            <p class="cal-picker-hint">Select a status, then tap a date:</p>
+            <p class="cal-picker-hint" data-i18n="calPickerHint">
+              Select a status, then tap a date:
+            </p>
             <div class="cal-status-btns">
               <button
                 class="status-btn available active"
                 data-status="available"
               >
-                <i class="fa fa-check-circle"></i> Available
+                <i class="fa fa-check-circle"></i>
+                <span data-i18n="calBtnAvailable">Available</span>
               </button>
               <button class="status-btn booked" data-status="booked">
-                <i class="fa fa-times-circle"></i> Booked
+                <i class="fa fa-times-circle"></i>
+                <span data-i18n="calBtnBooked">Booked</span>
               </button>
               <button class="status-btn unavailable" data-status="unavailable">
-                <i class="fa fa-ban"></i> Unavailable
+                <i class="fa fa-ban"></i>
+                <span data-i18n="calBtnUnavailable">Unavailable</span>
               </button>
               <button class="status-btn clear" data-status="none">
-                <i class="fa fa-eraser"></i> Clear
+                <i class="fa fa-eraser"></i>
+                <span data-i18n="calBtnClear">Clear</span>
               </button>
             </div>
           </div>
@@ -284,6 +330,7 @@
                 color: #7a7870;
                 font-size: 1rem;
               "
+              data-i18n="loadingGallery"
             >
               Loading gallery…
             </div>
@@ -305,7 +352,8 @@
             style="display: none; text-align: center; margin-top: 12px"
           >
             <button id="uploadGalleryBtn" class="gallery-upload-btn">
-              <i class="fa fa-camera"></i> Upload Photo
+              <i class="fa fa-camera"></i>
+              <span data-i18n="uploadPhoto">Upload Photo</span>
             </button>
             <input
               type="file"
@@ -327,7 +375,10 @@
       aria-label="Audio Settings"
     >
       <div class="panel-header">
-        <span><i class="fa fa-sliders-h"></i> Audio Settings</span>
+        <span
+          ><i class="fa fa-sliders-h"></i>
+          <span data-i18n="audioSettings">Audio Settings</span></span
+        >
         <button
           id="closeSettings"
           class="close-panel-btn"
@@ -338,7 +389,7 @@
       </div>
       <div class="panel-body">
         <div class="control-group">
-          <label for="bassControl">Bass</label>
+          <label for="bassControl" data-i18n="bass">Bass</label>
           <input
             type="range"
             id="bassControl"
@@ -351,7 +402,7 @@
           <span id="bassValue">0</span>
         </div>
         <div class="control-group">
-          <label for="trebleControl">Treble</label>
+          <label for="trebleControl" data-i18n="treble">Treble</label>
           <input
             type="range"
             id="trebleControl"
@@ -364,7 +415,7 @@
           <span id="trebleValue">0</span>
         </div>
         <div class="control-group repeat-row">
-          <label>Repeat</label>
+          <label data-i18n="repeat">Repeat</label>
           <button
             id="repeatBtn"
             title="Répéter la chanson"
@@ -380,11 +431,12 @@
     <!-- ── FOOTER ──────────────────────────────────────────── -->
     <footer class="artist-footer">
       <button class="book-me-btn" id="openBookingModal">
-        <i class="fa fa-calendar-check"></i> Bookings &amp; Reservations
+        <i class="fa fa-calendar-check"></i>
+        <span data-i18n="bookings">Bookings &amp; Reservations</span>
       </button>
       <div class="social-row">
         <a
-          href="https://www.instagram.com/dj_maitresam"
+          href="https://www.instagram.com/sammbende/"
           target="_blank"
           rel="noopener"
           class="social-icon instagram"
@@ -393,7 +445,7 @@
           <i class="fab fa-instagram"></i>
         </a>
         <a
-          href="https://www.tiktok.com/@djmaitresam"
+          href="https://www.tiktok.com/@sammbende"
           target="_blank"
           rel="noopener"
           class="social-icon tiktok"
@@ -411,7 +463,9 @@
           <i class="fab fa-youtube"></i>
         </a>
       </div>
-      <p class="footer-copy">© 2026 DJ Maitre Sam · All Rights Reserved</p>
+      <p class="footer-copy" data-i18n="footerCopy">
+        © 2026 DJ Maitre Sam · All Rights Reserved
+      </p>
     </footer>
 
     <!-- ── BOOKING MODAL ───────────────────────────────────── -->
@@ -425,8 +479,8 @@
     >
       <div class="booking-modal-header">
         <span
-          ><i class="fa fa-calendar-check"></i>&nbsp; Bookings &amp;
-          Reservations</span
+          ><i class="fa fa-calendar-check"></i>&nbsp;
+          <span data-i18n="bookings">Bookings &amp; Reservations</span></span
         >
         <button
           class="booking-close-btn"
@@ -443,12 +497,15 @@
           <div class="booking-success-icon">
             <i class="fa fa-check-circle"></i>
           </div>
-          <h3>Request Sent!</h3>
-          <p>Thank you — DJ Maitre Sam will get back to you shortly.</p>
+          <h3 data-i18n="bookingSuccessTitle">Request Sent!</h3>
+          <p data-i18n="bookingSuccessText">
+            Thank you — DJ Maitre Sam will get back to you shortly.
+          </p>
           <button
             class="book-me-btn"
             id="bookingSuccessClose"
             style="margin-top: 8px; font-size: 0.85rem; padding: 10px 28px"
+            data-i18n="close"
           >
             Close
           </button>
@@ -473,18 +530,23 @@
           <div class="bk-row bk-row-2">
             <div class="bk-field">
               <label for="bkName"
-                >Full Name <span class="bk-req">*</span></label
+                ><span data-i18n="labelName">Full Name</span>
+                <span class="bk-req">*</span></label
               >
               <input
                 type="text"
                 id="bkName"
                 name="name"
                 placeholder="Your name"
+                data-i18n-placeholder="placeholderName"
                 required
               />
             </div>
             <div class="bk-field">
-              <label for="bkEmail">Email <span class="bk-req">*</span></label>
+              <label for="bkEmail"
+                ><span data-i18n="labelEmail">Email</span>
+                <span class="bk-req">*</span></label
+              >
               <input
                 type="email"
                 id="bkEmail"
@@ -497,7 +559,7 @@
 
           <div class="bk-row bk-row-2">
             <div class="bk-field">
-              <label for="bkPhone">Phone</label>
+              <label for="bkPhone" data-i18n="labelPhone">Phone</label>
               <input
                 type="tel"
                 id="bkPhone"
@@ -507,32 +569,41 @@
             </div>
             <div class="bk-field">
               <label for="bkDate"
-                >Event Date <span class="bk-req">*</span></label
+                ><span data-i18n="labelDate">Event Date</span>
+                <span class="bk-req">*</span></label
               >
               <input type="date" id="bkDate" name="event_date" required />
             </div>
           </div>
 
           <div class="bk-field">
-            <label for="bkType">Event Type <span class="bk-req">*</span></label>
+            <label for="bkType"
+              ><span data-i18n="labelType">Event Type</span>
+              <span class="bk-req">*</span></label
+            >
             <select id="bkType" name="event_type" required>
-              <option value="" disabled selected>Select type…</option>
-              <option>Club Night / DJ Set</option>
-              <option>Private Party</option>
-              <option>Wedding</option>
-              <option>Corporate Event</option>
-              <option>Festival</option>
-              <option>Other</option>
+              <option value="" disabled selected data-i18n="selectType">
+                Select type…
+              </option>
+              <option data-i18n="optClub">Club Night / DJ Set</option>
+              <option data-i18n="optPrivate">Private Party</option>
+              <option data-i18n="optWedding">Wedding</option>
+              <option data-i18n="optCorporate">Corporate Event</option>
+              <option data-i18n="optFestival">Festival</option>
+              <option data-i18n="optOther">Other</option>
             </select>
           </div>
 
           <div class="bk-field">
-            <label for="bkMessage">Additional Details</label>
+            <label for="bkMessage" data-i18n="labelMessage"
+              >Additional Details</label
+            >
             <textarea
               id="bkMessage"
               name="message"
               rows="4"
               placeholder="Venue, guest count, special requests…"
+              data-i18n-placeholder="placeholderMessage"
             ></textarea>
           </div>
 
@@ -540,10 +611,12 @@
 
           <button type="submit" class="bk-submit-btn" id="bkSubmitBtn">
             <span id="bkBtnText"
-              ><i class="fa fa-paper-plane"></i>&nbsp; Send Request</span
+              ><i class="fa fa-paper-plane"></i>&nbsp;
+              <span data-i18n="sendRequest">Send Request</span></span
             >
             <span id="bkBtnSpinner" style="display: none"
-              ><i class="fa fa-spinner fa-spin"></i>&nbsp; Sending…</span
+              ><i class="fa fa-spinner fa-spin"></i>&nbsp;
+              <span data-i18n="sending">Sending…</span></span
             >
           </button>
         </form>

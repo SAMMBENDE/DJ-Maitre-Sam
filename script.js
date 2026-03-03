@@ -1,3 +1,169 @@
+// ── i18n / Language Toggle ───────────────────────────────────
+const TRANSLATIONS = {
+  en: {
+    audioSettings: 'Audio Settings',
+    pressPlay: 'Press Play to Start the Experience',
+    selectTrack: 'Select a track to begin...',
+    aboutBio: 'About DjSam',
+    bioText:
+      'DJ Maitre Sam is a high-energy, multi-genre DJ blending Afro beats and global hits into seamless, cinematic sets that deliver an unforgettable experience. With over a decade behind the decks, his mastery of sound and crowd psychology has positioned him among the most dynamic DJs of his generation.',
+    eventsTitle: 'Events & Experiences',
+    eventsList:
+      'Corporate Events | Weddings | Birthday Parties | VIP Events | Festivals | Private Parties | Fashion Shows | Gala Dinners',
+    tabMixtapes: 'Mixtapes',
+    tabCalendar: 'Calendar',
+    tabGallery: 'Gallery',
+    loadingTracks: 'Loading tracks\u2026',
+    calSun: 'Sun',
+    calMon: 'Mon',
+    calTue: 'Tue',
+    calWed: 'Wed',
+    calThu: 'Thu',
+    calFri: 'Fri',
+    calSat: 'Sat',
+    calAvailable: 'Available',
+    calBooked: 'Booked',
+    calUnavailable: 'Unavailable',
+    calPickerHint: 'Select a status, then tap a date:',
+    calBtnAvailable: 'Available',
+    calBtnBooked: 'Booked',
+    calBtnUnavailable: 'Unavailable',
+    calBtnClear: 'Clear',
+    loadingGallery: 'Loading gallery\u2026',
+    uploadPhoto: 'Upload Photo',
+    bass: 'Bass',
+    treble: 'Treble',
+    repeat: 'Repeat',
+    bookings: 'Bookings & Reservations',
+    footerCopy: '\u00a9 2026 DJ Maitre Sam \u00b7 All Rights Reserved',
+    bookingSuccessTitle: 'Request Sent!',
+    bookingSuccessText:
+      'Thank you \u2014 DJ Maitre Sam will get back to you shortly.',
+    close: 'Close',
+    labelName: 'Full Name',
+    labelEmail: 'Email',
+    labelPhone: 'Phone',
+    labelDate: 'Event Date',
+    labelType: 'Event Type',
+    labelMessage: 'Additional Details',
+    placeholderName: 'Your name',
+    placeholderMessage: 'Venue, guest count, special requests\u2026',
+    selectType: 'Select type\u2026',
+    optClub: 'Club Night / DJ Set',
+    optPrivate: 'Private Party',
+    optWedding: 'Wedding',
+    optCorporate: 'Corporate Event',
+    optFestival: 'Festival',
+    optOther: 'Other',
+    sendRequest: 'Send Request',
+    sending: 'Sending\u2026',
+  },
+  fr: {
+    audioSettings: 'Param\u00e8tres Audio',
+    pressPlay: 'Appuyez sur Play pour D\u00e9marrer',
+    selectTrack: 'S\u00e9lectionnez un morceau\u2026',
+    aboutBio: '\u00c0 propos de DjSam',
+    bioText:
+      'DJ Ma\u00eetre Sam est un DJ multi-genres \u00e0 haute \u00e9nergie, m\u00ealant afrobeats et hits mondiaux en sets cin\u00e9matographiques inoubliables. Avec plus d\u2019une d\u00e9cennie derri\u00e8re les platines, sa ma\u00eetrise du son et de la psychologie des foules le place parmi les DJs les plus dynamiques de sa g\u00e9n\u00e9ration.',
+    eventsTitle: 'Événements & Expériences',
+    eventsList:
+      'Événements d\u2019entreprise | Mariages | Anniversaires | Événements VIP | Festivals | Soirées Privées | Défilés de Mode | Dîners de Gala',
+    tabMixtapes: 'Mixtapes',
+    tabCalendar: 'Calendrier',
+    tabGallery: 'Galerie',
+    loadingTracks: 'Chargement des pistes\u2026',
+    calSun: 'Dim',
+    calMon: 'Lun',
+    calTue: 'Mar',
+    calWed: 'Mer',
+    calThu: 'Jeu',
+    calFri: 'Ven',
+    calSat: 'Sam',
+    calAvailable: 'Disponible',
+    calBooked: 'R\u00e9serv\u00e9',
+    calUnavailable: 'Indisponible',
+    calPickerHint: 'S\u00e9lectionnez un statut, puis tapez une date\u00a0:',
+    calBtnAvailable: 'Disponible',
+    calBtnBooked: 'R\u00e9serv\u00e9',
+    calBtnUnavailable: 'Indisponible',
+    calBtnClear: 'Effacer',
+    loadingGallery: 'Chargement de la galerie\u2026',
+    uploadPhoto: 'T\u00e9l\u00e9charger une photo',
+    bass: 'Basses',
+    treble: 'Aigus',
+    repeat: 'R\u00e9p\u00e9ter',
+    bookings: 'R\u00e9servations & \u00c9v\u00e9nements',
+    footerCopy:
+      '\u00a9 2026 DJ Ma\u00eetre Sam \u00b7 Tous droits r\u00e9serv\u00e9s',
+    bookingSuccessTitle: 'Demande envoy\u00e9e\u00a0!',
+    bookingSuccessText:
+      'Merci \u2014 DJ Ma\u00eetre Sam vous r\u00e9pondra sous peu.',
+    close: 'Fermer',
+    labelName: 'Nom complet',
+    labelEmail: 'Email',
+    labelPhone: 'T\u00e9l\u00e9phone',
+    labelDate: '\u00c9v\u00e9nement \u2014 Date',
+    labelType: 'Type d\u2019\u00e9v\u00e9nement',
+    labelMessage: 'D\u00e9tails suppl\u00e9mentaires',
+    placeholderName: 'Votre nom',
+    placeholderMessage:
+      'Lieu, nombre d\u2019invit\u00e9s, demandes sp\u00e9ciales\u2026',
+    selectType: 'Choisir le type\u2026',
+    optClub: 'Soir\u00e9e Club / DJ Set',
+    optPrivate: 'F\u00eate Priv\u00e9e',
+    optWedding: 'Mariage',
+    optCorporate: '\u00c9v\u00e9nement d\u2019entreprise',
+    optFestival: 'Festival',
+    optOther: 'Autre',
+    sendRequest: 'Envoyer la demande',
+    sending: 'Envoi\u2026',
+  },
+}
+
+let currentLang =
+  localStorage.getItem('djsam-lang') ||
+  (navigator.language.startsWith('fr') ? 'fr' : 'en')
+
+function applyLanguage(lang) {
+  currentLang = lang
+  localStorage.setItem('djsam-lang', lang)
+  document.documentElement.lang = lang
+  const t = TRANSLATIONS[lang]
+
+  // The known "no track selected" placeholder texts (both langs)
+  const noTrackTexts = new Set([
+    TRANSLATIONS.en.selectTrack,
+    TRANSLATIONS.fr.selectTrack,
+  ])
+
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    const key = el.dataset.i18n
+    if (t[key] === undefined) return
+    // Don't overwrite the now-playing track name when a track is active
+    if (
+      el.id === 'currentTrackName' &&
+      !noTrackTexts.has(el.textContent.trim())
+    )
+      return
+    el.textContent = t[key]
+  })
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+    const key = el.dataset.i18nPlaceholder
+    if (t[key] !== undefined) el.placeholder = t[key]
+  })
+
+  const langLabel = document.getElementById('langLabel')
+  if (langLabel) langLabel.textContent = lang === 'en' ? 'FR' : 'EN'
+}
+
+function toggleLanguage() {
+  applyLanguage(currentLang === 'en' ? 'fr' : 'en')
+}
+
+// Apply saved / detected language on load
+document.addEventListener('DOMContentLoaded', () => applyLanguage(currentLang))
+
 // ── Gallery API ──────────────────────────────────────────────
 // Update GALLERY_API_URL once your Render service is live.
 // Leave as empty string to fall back to the embedded static slides.
@@ -659,21 +825,21 @@ async function loadTracksFromAPI() {
     ul.innerHTML = ''
     // Show all categories (afro, funk, zouk) in the single Mixtapes list
     tracks.forEach((track) => {
-        const li = document.createElement('li')
-        li.dataset.src = track.url
-        li.innerHTML = `${track.title}
+      const li = document.createElement('li')
+      li.dataset.src = track.url
+      li.innerHTML = `${track.title}
           <a href="${track.url}" download class="download-btn" title="Télécharger">
             <i class="fa fa-download"></i>
           </a>`
-        li.addEventListener('click', function () {
-          document
-            .querySelectorAll('.category-list li')
-            .forEach((el) => el.classList.remove('active'))
-          this.classList.add('active')
-          audioPlayer.src = this.dataset.src
-          audioPlayer.play()
-        })
-        ul.appendChild(li)
+      li.addEventListener('click', function () {
+        document
+          .querySelectorAll('.category-list li')
+          .forEach((el) => el.classList.remove('active'))
+        this.classList.add('active')
+        audioPlayer.src = this.dataset.src
+        audioPlayer.play()
+      })
+      ul.appendChild(li)
     })
     // Auto-select first track
     const first = ul.querySelector('li')
