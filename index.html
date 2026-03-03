@@ -162,6 +162,24 @@
         >
       </div>
 
+      <!-- ── PROGRESS BAR ──────────────────────────────────── -->
+      <div class="progress-container" id="progressContainer">
+        <span class="time-current" id="timeCurrent">0:00</span>
+        <div
+          class="progress-track"
+          id="progressTrack"
+          role="slider"
+          aria-label="Seek"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <div class="progress-fill" id="progressFill"></div>
+          <div class="progress-thumb" id="progressThumb"></div>
+        </div>
+        <span class="time-total" id="timeTotal">0:00</span>
+      </div>
+
       <!-- Hidden audio element — controlled by custom buttons -->
       <audio id="audioPlayer" preload="none" crossorigin="anonymous"></audio>
     </section>

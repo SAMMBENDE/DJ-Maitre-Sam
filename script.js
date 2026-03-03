@@ -488,12 +488,91 @@ audioPlayer.addEventListener('pause', () => {
   if (equalizer) {
     equalizer.classList.remove('playing')
   }
+  progressContainer.classList.remove('active')
 })
 
 audioPlayer.addEventListener('ended', function () {
   if (equalizer) {
     equalizer.classList.remove('playing')
   }
+  progressContainer.classList.remove('active')
+})
+
+// ── Progress Bar ─────────────────────────────────────────────
+const progressContainer = document.getElementById('progressContainer')
+const progressTrack = document.getElementById('progressTrack')
+const progressFill = document.getElementById('progressFill')
+const progressThumb = document.getElementById('progressThumb')
+const timeCurrent = document.getElementById('timeCurrent')
+const timeTotal = document.getElementById('timeTotal')
+
+function formatTime(s) {
+  if (isNaN(s) || s < 0) return '0:00'
+  const m = Math.floor(s / 60)
+  const sec = String(Math.floor(s % 60)).padStart(2, '0')
+  return `${m}:${sec}`
+}
+
+function updateProgressBar() {
+  const { currentTime, duration } = audioPlayer
+  if (!duration) return
+  const pct = (currentTime / duration) * 100
+  progressFill.style.width = pct + '%'
+  progressThumb.style.left = pct + '%'
+  progressTrack.setAttribute('aria-valuenow', Math.round(pct))
+  timeCurrent.textContent = formatTime(currentTime)
+}
+
+audioPlayer.addEventListener('play', () => {
+  progressContainer.classList.add('active')
+})
+
+audioPlayer.addEventListener('loadedmetadata', () => {
+  timeTotal.textContent = formatTime(audioPlayer.duration)
+  updateProgressBar()
+})
+
+audioPlayer.addEventListener('timeupdate', updateProgressBar)
+
+// Seek on click or drag
+function seekFromEvent(e) {
+  const rect = progressTrack.getBoundingClientRect()
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX
+  const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+  if (audioPlayer.duration) {
+    audioPlayer.currentTime = ratio * audioPlayer.duration
+    updateProgressBar()
+  }
+}
+
+let isSeeking = false
+progressTrack.addEventListener('mousedown', (e) => {
+  isSeeking = true
+  seekFromEvent(e)
+})
+progressTrack.addEventListener(
+  'touchstart',
+  (e) => {
+    isSeeking = true
+    seekFromEvent(e)
+  },
+  { passive: true },
+)
+document.addEventListener('mousemove', (e) => {
+  if (isSeeking) seekFromEvent(e)
+})
+document.addEventListener(
+  'touchmove',
+  (e) => {
+    if (isSeeking) seekFromEvent(e)
+  },
+  { passive: true },
+)
+document.addEventListener('mouseup', () => {
+  isSeeking = false
+})
+document.addEventListener('touchend', () => {
+  isSeeking = false
 })
 
 // Tab switching
