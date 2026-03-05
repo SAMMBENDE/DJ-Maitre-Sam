@@ -539,7 +539,11 @@ setInterval(() => {
 
 // Resume audioContext when app comes back to foreground (never suspend — kills mobile background audio)
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && audioContext && audioContext.state === 'suspended') {
+  if (
+    document.visibilityState === 'visible' &&
+    audioContext &&
+    audioContext.state === 'suspended'
+  ) {
     audioContext.resume()
   }
 })
@@ -1005,11 +1009,6 @@ async function loadTracksFromAPI() {
       first.classList.add('active')
       audioPlayer.src = first.dataset.src
     }
-
-    // Auto-open Mixtapes panel — no double-click needed
-    ul.style.display = 'block'
-    ul.classList.add('panel-open')
-    document.querySelector('.tab-btn[data-tab="afro"]')?.classList.add('active')
 
     // Restore last playback position if saved in this session
     const savedSrc = localStorage.getItem('djsam-src')
