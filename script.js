@@ -504,9 +504,8 @@ audioPlayer.addEventListener('play', () => {
 })
 
 audioPlayer.addEventListener('pause', () => {
-  if (audioContext && audioContext.state === 'running') {
-    audioContext.suspend()
-  }
+  // Do NOT suspend the AudioContext — suspending kills background audio on mobile.
+  // The OS / browser will manage the audio thread when needed.
   if (equalizer) {
     equalizer.classList.remove('playing')
   }
@@ -521,15 +520,15 @@ audioPlayer.addEventListener('ended', function () {
   }
   progressContainer.classList.remove('active')
   // Clear saved state when a track finishes naturally
-  sessionStorage.removeItem('djsam-src')
-  sessionStorage.removeItem('djsam-time')
+  localStorage.removeItem('djsam-src')
+  localStorage.removeItem('djsam-time')
 })
 
 // ── Playback state persistence ───────────────────────────────
 function savePlaybackState() {
   if (audioPlayer.src && audioPlayer.currentTime > 0) {
-    sessionStorage.setItem('djsam-src', audioPlayer.src)
-    sessionStorage.setItem('djsam-time', audioPlayer.currentTime)
+    localStorage.setItem('djsam-src', audioPlayer.src)
+    localStorage.setItem('djsam-time', audioPlayer.currentTime)
   }
 }
 
@@ -538,16 +537,10 @@ setInterval(() => {
   if (!audioPlayer.paused) savePlaybackState()
 }, 5000)
 
-// Resume audioContext when app comes back to foreground
+// Resume audioContext when app comes back to foreground (never suspend — kills mobile background audio)
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    if (
-      audioContext &&
-      audioContext.state === 'suspended' &&
-      !audioPlayer.paused
-    ) {
-      audioContext.resume()
-    }
+  if (document.visibilityState === 'visible' && audioContext && audioContext.state === 'suspended') {
+    audioContext.resume()
   }
 })
 
@@ -1019,8 +1012,8 @@ async function loadTracksFromAPI() {
     document.querySelector('.tab-btn[data-tab="afro"]')?.classList.add('active')
 
     // Restore last playback position if saved in this session
-    const savedSrc = sessionStorage.getItem('djsam-src')
-    const savedTime = parseFloat(sessionStorage.getItem('djsam-time') || '0')
+    const savedSrc = localStorage.getItem('djsam-src')
+    const savedTime = parseFloat(localStorage.getItem('djsam-time') || '0')
     if (savedSrc && savedTime > 0) {
       const matchLi = Array.from(ul.querySelectorAll('li[data-src]')).find(
         (li) => li.dataset.src === savedSrc,
