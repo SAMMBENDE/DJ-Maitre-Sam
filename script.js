@@ -345,7 +345,9 @@ async function loadGalleryFromAPI() {
   const loading = document.getElementById('galleryLoading')
   try {
     if (GALLERY_API_URL) {
-      const res = await fetch(GALLERY_API_URL + '/images')
+      const res = await fetch(GALLERY_API_URL + '/images', {
+        cache: 'no-store',
+      })
       if (!res.ok) throw new Error('API error ' + res.status)
       const images = await res.json()
       if (images.length > 0) {
@@ -981,7 +983,7 @@ if (uploadGalleryBtn && galleryUploadInput) {
 // ── Load tracks from API ─────────────────────────────────────
 async function loadTracksFromAPI() {
   try {
-    const res = await fetch(GALLERY_API_URL + '/tracks')
+    const res = await fetch(GALLERY_API_URL + '/tracks', { cache: 'no-store' })
     if (!res.ok) throw new Error('API error')
     const tracks = await res.json()
     if (!tracks.length) return
@@ -1327,7 +1329,9 @@ window.addEventListener('load', () => {
   async function loadCalendar() {
     // Try API first
     try {
-      const r = await fetch(GALLERY_API_URL + '/calendar')
+      const r = await fetch(GALLERY_API_URL + '/calendar', {
+        cache: 'no-store',
+      })
       if (!r.ok) throw new Error('API')
       const data = await r.json() // [{date, status}...]
       calBookings = {}

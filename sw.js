@@ -1,4 +1,4 @@
-const CACHE_NAME = 'djsam-player-v3' // Updated version number
+const CACHE_NAME = 'djsam-player-v4' // Bump: API calls no longer cached
 const urlsToCache = [
   './',
   './index.html',
@@ -52,6 +52,12 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request
   const url = new URL(request.url)
+
+  // Never cache API calls — always fetch live from the server
+  if (url.hostname === 'dj-maitre-sam.onrender.com') {
+    event.respondWith(fetch(request))
+    return
+  }
 
   // Network first strategy for main app files (to get updates immediately)
   if (
