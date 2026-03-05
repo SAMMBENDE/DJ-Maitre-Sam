@@ -423,6 +423,20 @@ const trebleControl = document.getElementById('trebleControl')
 const bassValue = document.getElementById('bassValue')
 const trebleValue = document.getElementById('trebleValue')
 
+// Restore saved EQ slider values immediately
+;(function restoreEQSliders() {
+  const savedBass = localStorage.getItem('djsam-bass')
+  const savedTreble = localStorage.getItem('djsam-treble')
+  if (savedBass !== null) {
+    bassControl.value = savedBass
+    bassValue.textContent = savedBass
+  }
+  if (savedTreble !== null) {
+    trebleControl.value = savedTreble
+    trebleValue.textContent = savedTreble
+  }
+})()
+
 // Audio context for EQ
 let audioContext
 let source
@@ -449,12 +463,19 @@ function initializeAudioContext() {
     source.connect(bassFilter)
     bassFilter.connect(trebleFilter)
     trebleFilter.connect(audioContext.destination)
+
+    // Apply persisted EQ values
+    const savedBass = parseFloat(localStorage.getItem('djsam-bass') || '0')
+    const savedTreble = parseFloat(localStorage.getItem('djsam-treble') || '0')
+    bassFilter.gain.value = savedBass
+    trebleFilter.gain.value = savedTreble
   }
 }
 
 // Bass control
 bassControl.addEventListener('input', function () {
   bassValue.textContent = this.value
+  localStorage.setItem('djsam-bass', this.value)
   if (bassFilter) {
     bassFilter.gain.value = this.value
   }
@@ -463,6 +484,7 @@ bassControl.addEventListener('input', function () {
 // Treble control
 trebleControl.addEventListener('input', function () {
   trebleValue.textContent = this.value
+  localStorage.setItem('djsam-treble', this.value)
   if (trebleFilter) {
     trebleFilter.gain.value = this.value
   }
@@ -489,6 +511,8 @@ audioPlayer.addEventListener('pause', () => {
     equalizer.classList.remove('playing')
   }
   progressContainer.classList.remove('active')
+  // Save playback position so we can resume from here
+  savePlaybackState()
 })
 
 audioPlayer.addEventListener('ended', function () {
@@ -496,6 +520,67 @@ audioPlayer.addEventListener('ended', function () {
     equalizer.classList.remove('playing')
   }
   progressContainer.classList.remove('active')
+  // Clear saved state when a track finishes naturally
+  sessionStorage.removeItem('djsam-src')
+  sessionStorage.removeItem('djsam-time')
+})
+
+// ── Playback state persistence ───────────────────────────────
+function savePlaybackState() {
+  if (audioPlayer.src && audioPlayer.currentTime > 0) {
+    sessionStorage.setItem('djsam-src', audioPlayer.src)
+    sessionStorage.setItem('djsam-time', audioPlayer.currentTime)
+  }
+}
+
+// Save position every 5 s while playing
+setInterval(() => {
+  if (!audioPlayer.paused) savePlaybackState()
+}, 5000)
+
+// Resume audioContext when app comes back to foreground
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    if (
+      audioContext &&
+      audioContext.state === 'suspended' &&
+      !audioPlayer.paused
+    ) {
+      audioContext.resume()
+    }
+  }
+})
+
+// ── MediaSession API — lock-screen / notification controls ───
+if ('mediaSession' in navigator) {
+  navigator.mediaSession.setActionHandler('play', () => {
+    audioPlayer.play().catch(() => {})
+  })
+  navigator.mediaSession.setActionHandler('pause', () => {
+    audioPlayer.pause()
+  })
+  navigator.mediaSession.setActionHandler('previoustrack', () => {
+    document.getElementById('prevBtn')?.click()
+  })
+  navigator.mediaSession.setActionHandler('nexttrack', () => {
+    document.getElementById('nextBtn')?.click()
+  })
+}
+
+// Update MediaSession metadata when a new track plays
+audioPlayer.addEventListener('play', () => {
+  if ('mediaSession' in navigator) {
+    const trackName =
+      document.getElementById('currentTrackName')?.textContent ||
+      'DJ Maitre Sam'
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: trackName,
+      artist: 'DJ Maitre Sam',
+      artwork: [
+        { src: 'images/djgroove.png', sizes: '512x512', type: 'image/png' },
+      ],
+    })
+  }
 })
 
 // ── Progress Bar ─────────────────────────────────────────────
@@ -920,11 +1005,38 @@ async function loadTracksFromAPI() {
       })
       ul.appendChild(li)
     })
+
     // Auto-select first track
     const first = ul.querySelector('li')
     if (first) {
       first.classList.add('active')
       audioPlayer.src = first.dataset.src
+    }
+
+    // Auto-open Mixtapes panel — no double-click needed
+    ul.style.display = 'block'
+    ul.classList.add('panel-open')
+    document.querySelector('.tab-btn[data-tab="afro"]')?.classList.add('active')
+
+    // Restore last playback position if saved in this session
+    const savedSrc = sessionStorage.getItem('djsam-src')
+    const savedTime = parseFloat(sessionStorage.getItem('djsam-time') || '0')
+    if (savedSrc && savedTime > 0) {
+      const matchLi = Array.from(ul.querySelectorAll('li[data-src]')).find(
+        (li) => li.dataset.src === savedSrc,
+      )
+      if (matchLi) {
+        ul.querySelectorAll('li').forEach((l) => l.classList.remove('active'))
+        matchLi.classList.add('active')
+        audioPlayer.src = savedSrc
+        audioPlayer.addEventListener(
+          'loadedmetadata',
+          () => {
+            audioPlayer.currentTime = savedTime
+          },
+          { once: true },
+        )
+      }
     }
   } catch (err) {
     console.warn('Could not load tracks from API:', err.message)
