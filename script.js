@@ -682,16 +682,21 @@ tabBtns.forEach((btn) => {
         if (typeof maybeLoadCalendar === 'function') maybeLoadCalendar()
       }, 50)
 
-      // Highlight first track in playlist
+      // Highlight first track in playlist — but never interrupt a playing track
       const items = targetPanel.querySelectorAll('li[data-src]')
       if (items.length > 0) {
-        categoryLists.forEach((list) =>
-          list
-            .querySelectorAll('li')
-            .forEach((li) => li.classList.remove('active')),
-        )
-        items[0].classList.add('active')
-        audioPlayer.src = items[0].dataset.src
+        const isPlaying = !audioPlayer.paused && audioPlayer.src
+        if (!isPlaying) {
+          // Nothing playing: pre-select first track visually and prime the src
+          categoryLists.forEach((list) =>
+            list
+              .querySelectorAll('li')
+              .forEach((li) => li.classList.remove('active')),
+          )
+          items[0].classList.add('active')
+          audioPlayer.src = items[0].dataset.src
+        }
+        // If music is playing, just show the list — don't touch the player
       }
     }
   })
