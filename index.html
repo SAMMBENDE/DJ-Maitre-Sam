@@ -719,70 +719,13 @@
                 }, 10000)
               }
 
-              // Show install prompt when available
+              // Show install prompt when available (Android / Chrome)
               let deferredPrompt
               window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault()
                 deferredPrompt = e
-                showInstallPromotion()
+                showInstallBanner('android')
               })
-
-              function showInstallPromotion() {
-                // Create install button
-                const installBtn = document.createElement('button')
-                installBtn.innerHTML =
-                  '<i class="fa fa-download"></i> Install App'
-                installBtn.className = 'install-btn'
-                installBtn.style.cssText = `
-                  position: fixed;
-                  top: 20px;
-                  right: 20px;
-                  background: #ff6b35;
-                  color: white;
-                  border: none;
-                  padding: 10px 20px;
-                  border-radius: 25px;
-                  font-family: inherit;
-                  font-weight: bold;
-                  cursor: pointer;
-                  z-index: 1000;
-                  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
-                  transition: all 0.3s ease;
-                `
-
-                installBtn.addEventListener('mouseover', () => {
-                  installBtn.style.transform = 'translateY(-2px)'
-                  installBtn.style.boxShadow =
-                    '0 6px 20px rgba(255, 107, 53, 0.4)'
-                })
-
-                installBtn.addEventListener('mouseout', () => {
-                  installBtn.style.transform = 'translateY(0)'
-                  installBtn.style.boxShadow =
-                    '0 4px 15px rgba(255, 107, 53, 0.3)'
-                })
-
-                installBtn.addEventListener('click', async () => {
-                  if (deferredPrompt) {
-                    deferredPrompt.prompt()
-                    const { outcome } = await deferredPrompt.userChoice
-                    console.log(
-                      `User response to the install prompt: ${outcome}`,
-                    )
-                    deferredPrompt = null
-                    installBtn.remove()
-                  }
-                })
-
-                document.body.appendChild(installBtn)
-
-                // Remove button after 10 seconds if not clicked
-                setTimeout(() => {
-                  if (installBtn.parentNode) {
-                    installBtn.remove()
-                  }
-                }, 10000)
-              }
             })
             .catch((registration) => {
               console.log('ServiceWorker registration failed: ', registration)
@@ -790,14 +733,82 @@
         })
       }
 
+      // ── Install Banner ────────────────────────────────────
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
+      const isInStandalone =
+        window.navigator.standalone === true ||
+        window.matchMedia('(display-mode: standalone)').matches
+      const bannerDismissed = localStorage.getItem('djsam-install-dismissed')
+
+      // Show iOS banner after a short delay if not already installed / dismissed
+      if (isIOS && !isInStandalone && !bannerDismissed) {
+        setTimeout(() => showInstallBanner('ios'), 3000)
+      }
+
+      function showInstallBanner(type) {
+        if (document.getElementById('installBanner')) return
+        if (isInStandalone) return
+
+        const banner = document.createElement('div')
+        banner.id = 'installBanner'
+        banner.className = 'install-banner'
+
+        if (type === 'ios') {
+          banner.innerHTML = `
+            <div class="install-banner-icon"><i class="fa fa-music"></i></div>
+            <div class="install-banner-text">
+              <strong>Install DJ Maître Sam</strong>
+              <span>Tap <i class="fa fa-share-from-square"></i> then <em>Add to Home Screen</em></span>
+            </div>
+            <button class="install-banner-close" id="installBannerClose"><i class="fa fa-times"></i></button>
+          `
+        } else {
+          banner.innerHTML = `
+            <div class="install-banner-icon"><i class="fa fa-music"></i></div>
+            <div class="install-banner-text">
+              <strong>Install DJ Maître Sam</strong>
+              <span>Add to your home screen for the best experience</span>
+            </div>
+            <button class="install-banner-install" id="installBannerBtn">Install</button>
+            <button class="install-banner-close" id="installBannerClose"><i class="fa fa-times"></i></button>
+          `
+        }
+
+        document.body.appendChild(banner)
+        // Animate in
+        requestAnimationFrame(() => banner.classList.add('install-banner-show'))
+
+        document
+          .getElementById('installBannerClose')
+          .addEventListener('click', () => {
+            banner.classList.remove('install-banner-show')
+            setTimeout(() => banner.remove(), 350)
+            localStorage.setItem('djsam-install-dismissed', '1')
+          })
+
+        if (type === 'android') {
+          document
+            .getElementById('installBannerBtn')
+            .addEventListener('click', async () => {
+              if (deferredPrompt) {
+                deferredPrompt.prompt()
+                const { outcome } = await deferredPrompt.userChoice
+                deferredPrompt = null
+                banner.remove()
+                if (outcome === 'accepted') {
+                  localStorage.setItem('djsam-install-dismissed', '1')
+                }
+              }
+            })
+        }
+      }
+
       // Handle app installation
       window.addEventListener('appinstalled', () => {
         console.log('PWA was installed')
-        // Hide install promotion
-        const installBtn = document.querySelector('.install-btn')
-        if (installBtn) {
-          installBtn.remove()
-        }
+        const banner = document.getElementById('installBanner')
+        if (banner) banner.remove()
+        localStorage.setItem('djsam-install-dismissed', '1')
       })
 
       // Add manual refresh button for development/testing
