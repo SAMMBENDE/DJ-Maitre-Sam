@@ -471,6 +471,13 @@ function initializeAudioContext() {
     const savedTreble = parseFloat(localStorage.getItem('djsam-treble') || '0')
     bassFilter.gain.value = savedBass
     trebleFilter.gain.value = savedTreble
+
+    // Auto-resume if the OS suspends the context (e.g. screen lock)
+    audioContext.onstatechange = () => {
+      if (audioContext.state === 'suspended' && !audioPlayer.paused) {
+        audioContext.resume().catch(() => {})
+      }
+    }
   }
 }
 
@@ -579,6 +586,13 @@ audioPlayer.addEventListener('play', () => {
         { src: 'images/djgroove.png', sizes: '512x512', type: 'image/png' },
       ],
     })
+    navigator.mediaSession.playbackState = 'playing'
+  }
+})
+
+audioPlayer.addEventListener('pause', () => {
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = 'paused'
   }
 })
 
