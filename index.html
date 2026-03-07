@@ -718,14 +718,6 @@
                   }
                 }, 10000)
               }
-
-              // Show install prompt when available (Android / Chrome)
-              let deferredPrompt
-              window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault()
-                deferredPrompt = e
-                showInstallBanner('android')
-              })
             })
             .catch((registration) => {
               console.log('ServiceWorker registration failed: ', registration)
@@ -734,6 +726,14 @@
       }
 
       // ── Install Banner ────────────────────────────────────
+      // deferredPrompt must be in outer scope so showInstallBanner() can access it
+      let deferredPrompt = null
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault()
+        deferredPrompt = e
+        showInstallBanner('android')
+      })
+
       const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
       const isInStandalone =
         window.navigator.standalone === true ||
