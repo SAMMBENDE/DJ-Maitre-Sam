@@ -1,4 +1,4 @@
-const CACHE_NAME = 'djsam-player-v4' // Bump: API calls no longer cached
+const CACHE_NAME = 'djsam-player-v5' // Bump: force no-store on all API requests
 const urlsToCache = [
   './',
   './index.html',
@@ -55,7 +55,21 @@ self.addEventListener('fetch', (event) => {
 
   // Never cache API calls — always fetch live from the server
   if (url.hostname === 'dj-maitre-sam.onrender.com') {
-    event.respondWith(fetch(request))
+    // Create a brand-new request with cache: 'no-store' so neither the browser
+    // HTTP cache nor any intermediate cache can serve a stale response
+    const fresh = new Request(request.url, {
+      method: request.method,
+      headers: request.headers,
+      body:
+        request.method !== 'GET' && request.method !== 'HEAD'
+          ? request.body
+          : undefined,
+      mode: 'cors',
+      credentials: request.credentials,
+      cache: 'no-store',
+      redirect: request.redirect,
+    })
+    event.respondWith(fetch(fresh))
     return
   }
 

@@ -345,7 +345,7 @@ async function loadGalleryFromAPI() {
   const loading = document.getElementById('galleryLoading')
   try {
     if (GALLERY_API_URL) {
-      const res = await fetch(GALLERY_API_URL + '/images', {
+      const res = await fetch(GALLERY_API_URL + '/images?_=' + Date.now(), {
         cache: 'no-store',
       })
       if (!res.ok) throw new Error('API error ' + res.status)
@@ -997,7 +997,10 @@ if (uploadGalleryBtn && galleryUploadInput) {
 // ── Load tracks from API ─────────────────────────────────────
 async function loadTracksFromAPI() {
   try {
-    const res = await fetch(GALLERY_API_URL + '/tracks', { cache: 'no-store' })
+    // Append timestamp to bust any residual HTTP-level or CDN cache
+    const res = await fetch(GALLERY_API_URL + '/tracks?_=' + Date.now(), {
+      cache: 'no-store',
+    })
     if (!res.ok) throw new Error('API error')
     const tracks = await res.json()
     if (!tracks.length) return

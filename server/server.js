@@ -39,6 +39,12 @@ const Track = mongoose.model('Track', trackSchema)
 // ── Image routes ─────────────────────────────────────────────
 
 app.get('/images', async (req, res) => {
+  res.set(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate',
+  )
+  res.set('Pragma', 'no-cache')
+  res.set('Expires', '0')
   try {
     const images = await Image.find().sort({ order: 1, createdAt: 1 })
     res.json(images)
@@ -96,6 +102,12 @@ app.patch('/images/:id', async (req, res) => {
 // ── Track routes ─────────────────────────────────────────────
 
 app.get('/tracks', async (req, res) => {
+  res.set(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate',
+  )
+  res.set('Pragma', 'no-cache')
+  res.set('Expires', '0')
   try {
     const tracks = await Track.find().sort({ createdAt: 1 })
     res.json(tracks)
