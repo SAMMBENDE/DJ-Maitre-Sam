@@ -1,3 +1,10 @@
+@media (max-width: 600px) {
+  .social-icon.paypal .paypal-tooltip {
+    font-size: 0.78rem;
+    padding: 5px 8px;
+    border-width: 1.5px;
+  }
+}
 /* ═══════════════════════════════════════════════════════════
    DJ Maitre Sam — Luxury Dark Artist Theme
    Palette: Deep Black · Gold · Warm Off-White
@@ -1920,6 +1927,39 @@ body::before {
   border-color: #ff0000;
   color: #ff0000;
   box-shadow: 0 0 22px rgba(255, 0, 0, 0.38);
+}
+
+.social-icon.paypal {
+  position: relative;
+}
+.social-icon.paypal .paypal-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  background: #000;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  border: 2px solid var(--gold);
+  padding: 7px 14px;
+  position: absolute;
+  z-index: 100;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow:
+    0 4px 18px rgba(212, 175, 55, 0.25),
+    0 2px 12px #000;
+  font-size: 0.98rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  pointer-events: none;
+  transition: opacity 0.22s;
+}
+.social-icon.paypal:hover .paypal-tooltip,
+.social-icon.paypal:focus .paypal-tooltip {
+  visibility: visible;
+  opacity: 1;
 }
 
 .footer-copy {
