@@ -1,8 +1,20 @@
+.paypal-label-xs {
+  display: none;
+}
+
 @media (max-width: 600px) {
   .social-icon.paypal .paypal-tooltip {
-    font-size: 0.78rem;
-    padding: 5px 8px;
-    border-width: 1.5px;
+    display: none !important;
+  }
+  .paypal-label-xs {
+    display: block;
+    font-size: 0.62rem;
+    color: var(--gold);
+    margin-top: 2px;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
   }
 }
 /* ═══════════════════════════════════════════════════════════
