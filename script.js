@@ -326,10 +326,16 @@ function buildCarouselFromImages(images) {
   container.innerHTML = ''
   indicatorsEl.innerHTML = ''
 
+  const isAuth = !!sessionStorage.getItem('uploadAuth')
+
   images.forEach((img, i) => {
     const slide = document.createElement('div')
     slide.className = 'carousel-slide' + (i === 0 ? ' active' : '')
-    slide.innerHTML = `<img src="${img.url}" alt="${img.name}" loading="lazy" /><div class="slide-caption">${img.name}</div>`
+    let deleteBtn = ''
+    if (isAuth && img._id) {
+      deleteBtn = `<button class="gallery-delete-btn" data-imgid="${img._id}" title="Delete Photo" style="position:absolute;top:10px;right:10px;z-index:2;background:#2a2a2a;color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:1.1rem;">&times;</button>`
+    }
+    slide.innerHTML = `<div style="position:relative;"><img src="${img.url}" alt="${img.name}" loading="lazy" />${deleteBtn}</div><div class="slide-caption">${img.name}</div>`
     container.appendChild(slide)
 
     const dot = document.createElement('span')
@@ -337,6 +343,30 @@ function buildCarouselFromImages(images) {
     dot.setAttribute('onclick', `currentSlide(${i + 1})`)
     indicatorsEl.appendChild(dot)
   })
+
+  // Attach delete handlers
+  if (isAuth) {
+    container.querySelectorAll('.gallery-delete-btn').forEach((btn) => {
+      btn.addEventListener('click', async function (e) {
+        e.stopPropagation()
+        if (!confirm('Delete this photo?')) return
+        const imgId = this.getAttribute('data-imgid')
+        try {
+          const res = await fetch(GALLERY_API_URL + '/images/' + imgId, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: UPLOAD_PASSWORD }),
+          })
+          if (!res.ok) throw new Error('Delete failed')
+          // Remove image from UI and reload gallery
+          await loadGalleryFromAPI()
+          alert('Photo deleted!')
+        } catch (err) {
+          alert('Delete failed: ' + err.message)
+        }
+      })
+    })
+  }
 
   currentSlideIndex = 1
 }
