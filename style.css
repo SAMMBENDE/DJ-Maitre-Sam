@@ -3,6 +3,12 @@
 }
 
 @media (max-width: 600px) {
+  .carousel-container {
+    height: 70vh;
+    aspect-ratio: unset;
+  }
+}
+@media (max-width: 600px) {
   .social-icon.paypal .paypal-tooltip {
     display: none !important;
   }
@@ -1651,6 +1657,7 @@ body::before {
   margin-bottom: 10px;
   background: var(--bg-deep);
 }
+
 .carousel-slide {
   position: absolute;
   inset: 0;
